@@ -1,0 +1,31 @@
+MIT License
+
+Copyright (c) 2026 Mamadou Bassirou Diallo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+NOT MEDICAL ADVICE. TriageIQ is an emergency-department decision-support
+demonstration. It is not clinically validated, has not been compared against
+trained-nurse ESI ground truth on a held-out patient set, and must not be used
+to triage real patients without institutional review (IRB), a defined
+decision-support framework agreed with medical staff, malpractice coverage that
+contemplates AI-assisted decision support, and an EHR integration with the
+required privacy controls. All patient records, vitals, chief complaints, and
+clinical protocols in this repository are fabricated for demonstration. No
+real patient, medical institution, or clinical relationship is represented.
