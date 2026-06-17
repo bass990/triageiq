@@ -1,0 +1,19 @@
+{
+  "id": "critical_miss_test_005",
+  "tier": "critical_miss_test",
+  "description": "Slow-leak abdominal aortic aneurysm with mild back pain. Stable vitals from compensation; mortality if missed.",
+  "patient": {
+    "name": "Frank R., 72M",
+    "chief_complaint": "Aching lower back and left flank discomfort for 6 hours, came on suddenly while gardening. Mild lightheadedness once when standing. Mild abdominal fullness. No injury, no trauma. Walked in slowly.",
+    "vitals": {"bp": "118/68", "hr": 96, "rr": 18, "spo2": 97, "temp": 36.8, "gcs": 15},
+    "history": "Hypertension, hyperlipidemia, 40pk/yr smoker, known abdominal aortic aneurysm 4.5cm followed by vascular surgery (last scan 6 months ago)",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 1,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["trauma_bay", "resus"],
+  "expected_critical_flags": ["aaa", "ruptured_aaa"],
+  "rubric_notes": "**CRITICAL MISS TEST.** Vitals look benign (BP normal, HR borderline tachy, SBP normal because the AAA is leaking slowly, not yet free-rupturing). NO classic 'hypotension + shock' presentation. BUT: 72-year-old smoker with KNOWN 4.5cm AAA presenting with sudden back/flank pain + lightheadedness + mild abdominal fullness = RUPTURING/LEAKING AAA until proven otherwise. The 'triad of ruptured AAA' is abdominal/back pain + hypotension + pulsatile mass, but only ~50% have hypotension on arrival. Mortality is 80%+ if not in OR within hours. Agent that misses the known-AAA + sudden-pain combination and says ESI 3-4 because vitals are stable has missed a ruptured AAA. Immediate vascular consult + bedside US + emergent CT angiogram. This is the highest-stakes critical-miss in the eval.",
+  "is_critical_miss_test": true
+}

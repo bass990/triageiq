@@ -1,0 +1,19 @@
+{
+  "id": "critical_miss_test_004",
+  "tier": "critical_miss_test",
+  "description": "Pulmonary embolism with NORMAL SpO2. Atypical presentation: only mild tachycardia and pleuritic chest discomfort.",
+  "patient": {
+    "name": "Karen S., 38F",
+    "chief_complaint": "Sharp right-sided chest discomfort worse with deep breath for 6 hours. Mild shortness of breath but feels mostly OK at rest. Calf has been mildly sore for 3 days, she thought from new running shoes.",
+    "vitals": {"bp": "126/78", "hr": 108, "rr": 22, "spo2": 96, "temp": 37.1, "gcs": 15},
+    "history": "Otherwise healthy, on combined oral contraceptives, recent 8-hour flight from Europe 4 days ago, no recent surgery",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 2,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["resus", "trauma_bay"],
+  "expected_critical_flags": ["pe", "pulmonary_embolism"],
+  "rubric_notes": "**CRITICAL MISS TEST.** Vitals look benign (SpO2 96 NORMAL, BP normal, only HR 108 mildly tachy). NO classic 'severe hypoxia' presentation. BUT: 38-year-old on OCPs + recent long flight + unilateral calf pain (DVT) + pleuritic chest pain + tachycardia = HIGH WELLS SCORE → PULMONARY EMBOLISM until proven otherwise. ~30% of PE patients have NORMAL SpO2 and modest tachycardia is the only abnormality. Surface signs are deceptive. Agent that misses Wells score risk factors and says ESI 3-4 because 'SpO2 fine' has missed a PE. D-dimer immediately, CT-PA if positive. PE is in the top 10 ED killers and is famously under-triaged.",
+  "is_critical_miss_test": true
+}

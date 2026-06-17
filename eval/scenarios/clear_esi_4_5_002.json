@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_4_5_002",
+  "tier": "clear_esi_4_5",
+  "description": "Scheduled suture removal; clean wound, no signs of infection.",
+  "patient": {
+    "name": "Tom B., 30M",
+    "chief_complaint": "Scheduled suture removal from forearm laceration sutured 10 days ago at outside facility. Wound appears clean and dry, no signs of infection. Followed care instructions.",
+    "vitals": {"bp": "120/76", "hr": 68, "rr": 14, "spo2": 99, "temp": 36.8, "gcs": 15},
+    "history": "No significant PMH",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 5,
+  "acceptable_esi": [4, 5],
+  "expected_care_areas": ["waiting", "general"],
+  "expected_critical_flags": [],
+  "rubric_notes": "All vitals normal. Single brief procedure (suture removal) is a one-resource task. Per RUBRIC Rule 4-5 boundary: technically one resource = ESI 4, but suture removal is so brief many triage protocols treat as ESI 5. Either acceptable. Tests overtriage."
+}

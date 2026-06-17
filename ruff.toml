@@ -1,0 +1,19 @@
+line-length = 120
+target-version = "py310"
+
+[lint]
+select = ["E", "F", "I", "W", "UP", "B", "PL"]
+ignore = [
+    "E501",   # line-too-long (codebase uses compact style)
+    "E701",   # multi-statements on one line
+    "E702",   # multiple statements on one line (semicolon)
+    "PLR0913", # too-many-arguments
+    "PLR2004", # magic-value comparison
+    "PLR0912", # too-many-branches
+    "PLR0915", # too-many-statements
+    "PLR0911", # too-many-return-statements (rubric_canonical_esi is clearer flat)
+    "PLW0603", # global statement (lazy-loaded Anthropic client is the idiom)
+]
+
+[lint.per-file-ignores]
+"tests/*" = ["PLR2004", "F841"]

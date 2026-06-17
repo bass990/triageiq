@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_1_2_007",
+  "tier": "clear_esi_1_2",
+  "description": "Worst headache of life with neck stiffness in a 45-year-old female — concern for subarachnoid hemorrhage.",
+  "patient": {
+    "name": "Sarah K., 45F",
+    "chief_complaint": "Sudden onset worst headache of life 20 minutes ago, thunderclap quality. Photophobia, nausea, vomiting once. Mild neck stiffness developing. Brief loss of consciousness at onset per spouse.",
+    "vitals": {"bp": "182/108", "hr": 92, "rr": 16, "spo2": 98, "temp": 37.0, "gcs": 14},
+    "history": "No significant PMH, on combined oral contraceptives, smoker, family history of cerebral aneurysm",
+    "allergies": "None",
+    "arrival": "EMS"
+  },
+  "expected_esi": 2,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["resus", "trauma_bay"],
+  "expected_critical_flags": ["sah", "subarachnoid", "stroke"],
+  "rubric_notes": "Classic SAH presentation: sudden thunderclap headache + worst-of-life + LOC at onset + family history of aneurysm + smoker + OCPs. HTN 182/108 typical of SAH. GCS 14 concerning. Per RUBRIC §3 worst-headache-of-life = ESI 1-2 mandatory. Non-contrast CT head within minutes; LP if CT negative. CTA/MRA to follow."
+}

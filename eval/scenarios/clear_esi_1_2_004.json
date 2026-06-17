@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_1_2_004",
+  "tier": "clear_esi_1_2",
+  "description": "Major trauma with hypotension after high-speed MVA in a 35-year-old male.",
+  "patient": {
+    "name": "James R., 35M",
+    "chief_complaint": "High-speed motor vehicle collision, polytrauma, ejected from vehicle. Open femur fracture, suspected pelvic fracture, decreased breath sounds on right with chest wall deformity. Active bleeding controlled with pressure.",
+    "vitals": {"bp": "75/40", "hr": 138, "rr": 32, "spo2": 89, "temp": 35.8, "gcs": 12},
+    "history": "Unknown",
+    "allergies": "Unknown",
+    "arrival": "EMS"
+  },
+  "expected_esi": 1,
+  "acceptable_esi": [1],
+  "expected_care_areas": ["trauma_bay", "resus"],
+  "expected_critical_flags": ["trauma", "polytrauma"],
+  "rubric_notes": "Major polytrauma with hemodynamic instability. ALL six vitals critical (SBP <80, HR >130, RR >30, SpO2 <90, temp <36, GCS ≤12). Suspected hemorrhagic shock + tension pneumothorax + open fracture. Per RUBRIC §1 Rule 1: severe shock with signs of hypoperfusion + major trauma with hypotension = ESI 1 ABSOLUTE. trauma_bay only. Massive transfusion protocol + trauma surgery consult immediately."
+}

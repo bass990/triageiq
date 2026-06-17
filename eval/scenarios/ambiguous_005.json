@@ -1,0 +1,18 @@
+{
+  "id": "ambiguous_005",
+  "tier": "ambiguous",
+  "description": "Migraine in a young adult with classic features and normal vitals; defensible ESI 3 (workup needed to exclude secondary) or ESI 4 (typical migraine).",
+  "patient": {
+    "name": "Anna H., 26F",
+    "chief_complaint": "Severe right-sided throbbing migraine for 6 hours, classic pattern same as past 8 episodes over 3 years. Photophobia, nausea, no vomiting. No fever, no neck stiffness. Took sumatriptan with partial relief.",
+    "vitals": {"bp": "124/76", "hr": 78, "rr": 14, "spo2": 99, "temp": 36.9, "gcs": 15},
+    "history": "Known migraine history (multiple prior similar episodes), otherwise healthy, on OCPs",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 4,
+  "acceptable_esi": [3, 4],
+  "expected_care_areas": ["fast_track", "general"],
+  "expected_critical_flags": [],
+  "rubric_notes": "Classic migraine pattern matching prior episodes + stable vitals = low risk for secondary cause. Defensible ESI 3 (severe pain warrants prompt analgesia, IV access, possible IV fluids + anti-emetics = 2+ resources) or ESI 4 (typical migraine = symptom relief at fast_track, often single resource). OCP + smoker would elevate concern for atypical headache."
+}

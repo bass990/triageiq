@@ -1,0 +1,19 @@
+{
+  "id": "critical_miss_test_003",
+  "tier": "critical_miss_test",
+  "description": "Geriatric sepsis WITHOUT fever (normothermia common in elderly sepsis). Subtle vitals + lethargy.",
+  "patient": {
+    "name": "Edward F., 85M",
+    "chief_complaint": "Increasing lethargy and decreased appetite 3 days, family noticed urine smells strong, decreased oral intake, mildly confused beyond his baseline mild dementia. No fever reported at home. Came in because he won't drink today.",
+    "vitals": {"bp": "104/62", "hr": 102, "rr": 22, "spo2": 95, "temp": 36.4, "gcs": 13},
+    "history": "Mild dementia, BPH, prior UTIs, recent fall 1 week ago, on tamsulosin",
+    "allergies": "Sulfa drugs",
+    "arrival": "family"
+  },
+  "expected_esi": 2,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["resus"],
+  "expected_critical_flags": ["sepsis", "occult_sepsis"],
+  "rubric_notes": "**CRITICAL MISS TEST.** Vitals: temp NORMAL (36.4 — geriatric sepsis often presents without fever or with hypothermia), HR 102 borderline tachy, RR 22 concerning, SBP 104 borderline-low, GCS 13 concerning (altered from baseline). NO classic 'fever + hypotension + AMS' triad. BUT: 85-year-old with UTI history + altered mental + tachycardic + tachypneic + bordering-hypotensive = OCCULT UROSEPSIS until proven otherwise. ~25% of elderly sepsis is normothermic. The qSOFA score (AMS + RR ≥22 + SBP ≤100) is positive. Agent that says ESI 3-4 because 'no fever' has missed sepsis. Sepsis 3-Hour Bundle starts now.",
+  "is_critical_miss_test": true
+}

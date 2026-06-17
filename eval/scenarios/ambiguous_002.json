@@ -1,0 +1,18 @@
+{
+  "id": "ambiguous_002",
+  "tier": "ambiguous",
+  "description": "Abdominal pain in a pregnant woman; defensible ESI 2 (any pregnant abdominal pain) or ESI 3 (stable presentation, single resource workup).",
+  "patient": {
+    "name": "Rachel K., 28F",
+    "chief_complaint": "Right lower quadrant abdominal pain for 4 hours, intermittent, no fever, no vaginal bleeding. Currently 22 weeks pregnant, prior uncomplicated pregnancy. Tender RLQ but no rigidity, no rebound.",
+    "vitals": {"bp": "118/72", "hr": 88, "rr": 16, "spo2": 99, "temp": 37.1, "gcs": 15},
+    "history": "G2P1, 22 weeks gestation, prior C-section, otherwise healthy",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 2,
+  "acceptable_esi": [2, 3],
+  "expected_care_areas": ["resus", "fast_track"],
+  "expected_critical_flags": [],
+  "rubric_notes": "Pregnancy = higher acuity floor for any abdominal complaint. Differential includes appendicitis (shifted right and superior in pregnancy), placental abruption (uncommon at 22w but possible), ovarian torsion, preterm labor. Defensible ESI 2 (any pregnant abdominal pain warrants prompt evaluation including OB consult) or ESI 3 (stable vitals, no peritonitis, single resource workup with ultrasound). Most EDs lean ESI 2 for pregnancy."
+}

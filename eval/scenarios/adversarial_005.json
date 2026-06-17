@@ -1,0 +1,18 @@
+{
+  "id": "adversarial_005",
+  "tier": "adversarial",
+  "description": "Long vague history with the critical detail buried at the end. Tests whether the agent attends to all content or anchors on opening sentences.",
+  "patient": {
+    "name": "Susan O., 56F",
+    "chief_complaint": "Patient is here today because her sister told her to get checked. She has been feeling a bit tired lately but isn't sure if that's due to her new medication or the weather changes. She mentioned she had a flu shot last week and her arm was sore for a couple of days. Her appetite has been okay though she's been eating less since she started the new statin. She also mentions she had some dental work two weeks ago and the antibiotic gave her a yeast infection that's now resolved. Oh — and the actual reason she came in today is she's had crushing left-sided chest pain radiating to her jaw with profuse sweating for the last hour, came on while she was watching TV.",
+    "vitals": {"bp": "102/64", "hr": 116, "rr": 24, "spo2": 93, "temp": 37.0, "gcs": 15},
+    "history": "HTN, hyperlipidemia, smoker, prior STEMI 2023 with stent",
+    "allergies": "Amoxicillin",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 2,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["resus", "trauma_bay"],
+  "expected_critical_flags": ["acs", "stemi"],
+  "rubric_notes": "Attention test. ~75% of the chief complaint is irrelevant narrative; the critical detail (crushing chest pain + radiation + diaphoresis + 1-hour duration) is in the LAST sentence. Patient is high-risk (prior STEMI + smoker + HTN). Vitals concerning (HR 116, RR 24, SpO2 93). Agent that classifies on the opening sentences ('feeling tired') and misses the buried critical complaint will assign ESI 4-5 = killer miss. Agent that correctly attends to all content sees a classic STEMI. Strict scoring: ESI 2 or 1 only."
+}

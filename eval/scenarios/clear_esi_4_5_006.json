@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_4_5_006",
+  "tier": "clear_esi_4_5",
+  "description": "Routine wound dressing change, stable surgical wound, no signs of infection.",
+  "patient": {
+    "name": "Patricia D., 45F",
+    "chief_complaint": "Surgical dressing change requested for abdominal incision from cholecystectomy 8 days ago. Wound appears clean, dry, intact, no drainage, no erythema, no fever. Following post-op instructions but ran out of dressings.",
+    "vitals": {"bp": "126/80", "hr": 74, "rr": 14, "spo2": 99, "temp": 36.9, "gcs": 15},
+    "history": "Recent cholecystectomy 8 days ago, otherwise healthy",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 5,
+  "acceptable_esi": [4, 5],
+  "expected_care_areas": ["waiting", "general"],
+  "expected_critical_flags": [],
+  "rubric_notes": "All vitals normal. Wound exam shows no signs of infection (no fever, no erythema, no drainage). Single brief task (dressing change + instruction). Per RUBRIC Rule 5: ESI 5 (no resources, just supplies + instruction). Could be ESI 4 if counted as one resource (wound supplies). Tests whether agent escalates anything-post-surgical inappropriately."
+}

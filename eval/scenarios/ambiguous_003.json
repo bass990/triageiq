@@ -1,0 +1,18 @@
+{
+  "id": "ambiguous_003",
+  "tier": "ambiguous",
+  "description": "Pediatric fever in a 2-year-old; high temp but otherwise well-appearing. Defensible ESI 2 or 3.",
+  "patient": {
+    "name": "Liam P., 2M",
+    "chief_complaint": "Fever to 39.5°C for 24 hours, irritable but consolable, decreased oral intake but tolerating sips, no rash, no respiratory distress, brief tactile fever overnight. Parent reports two wet diapers in last 8 hours.",
+    "vitals": {"bp": "92/55", "hr": 138, "rr": 28, "spo2": 98, "temp": 39.6, "gcs": 15},
+    "history": "Healthy 2-year-old, immunizations up to date, no recent illness",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 3,
+  "acceptable_esi": [2, 3],
+  "expected_care_areas": ["fast_track", "general", "resus"],
+  "expected_critical_flags": [],
+  "rubric_notes": "Pediatric fever > 39 in toddler = elevated risk floor (occult bacteremia, UTI, otitis, viral). HR 138 is age-appropriate tachycardia for fever (compensatory) and not by itself critical for a 2-year-old. RR 28 elevated but mild for fever. Defensible ESI 2 (high fever in young child = prompt evaluation including urine + ?LP if ill-appearing) or ESI 3 (stable, well-appearing, single resource workup with urine analysis + symptomatic management). Many EDs use ESI 3 for well-appearing febrile toddlers; ESI 2 if ill-appearing. The rubric's adult-default vitals trip critical-tier here (temp >39.5) but pediatric context softens this — admit author judgment via acceptable_esi."
+}

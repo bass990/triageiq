@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_1_2_005",
+  "tier": "clear_esi_1_2",
+  "description": "Pediatric airway emergency (croup with stridor + respiratory distress) in a 5-year-old.",
+  "patient": {
+    "name": "Emma L., 5F",
+    "chief_complaint": "Barking cough, stridor at rest, labored breathing with accessory muscle use, retractions. Woke from sleep unable to breathe normally. Parent reports symptoms worsened rapidly over 2 hours.",
+    "vitals": {"bp": "96/62", "hr": 148, "rr": 42, "spo2": 91, "temp": 39.8, "gcs": 14},
+    "history": "No significant PMH, vaccinations up to date",
+    "allergies": "None",
+    "arrival": "EMS"
+  },
+  "expected_esi": 1,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["trauma_bay", "resus"],
+  "expected_critical_flags": ["airway", "stridor"],
+  "rubric_notes": "Pediatric airway emergency. Stridor AT REST + accessory muscle use + retractions = impending airway failure. Multiple critical vitals (HR >130 critical even for age-adjusted pediatric, RR >30 critical, SpO2 <94 concerning, temp >39.5 critical, GCS <15 concerning). Per RUBRIC §3 airway emergency = ESI 1. Pediatric vitals adjusted but still trip the rules. Croup or epiglottitis; nebulized epinephrine + dexamethasone immediate; do NOT examine throat without secured airway."
+}

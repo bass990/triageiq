@@ -1,0 +1,18 @@
+{
+  "id": "ambiguous_001",
+  "tier": "ambiguous",
+  "description": "Chest pain in a 42-year-old smoker without classic ACS triad. Defensible to assign ESI 2 (cautious) or 3 (low-risk workup).",
+  "patient": {
+    "name": "Mike T., 42M",
+    "chief_complaint": "Intermittent left-sided chest discomfort for 2 hours, dull pressure, not radiating, mildly worse with deep breath. No diaphoresis. Mild anxiety. Drove self in.",
+    "vitals": {"bp": "138/86", "hr": 92, "rr": 18, "spo2": 98, "temp": 36.9, "gcs": 15},
+    "history": "Smoker 15pk/yr, otherwise healthy, no known cardiac disease, father had MI age 60",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 3,
+  "acceptable_esi": [2, 3],
+  "expected_care_areas": ["resus", "fast_track", "general"],
+  "expected_critical_flags": ["acs"],
+  "rubric_notes": "Chest pain in a smoker with family history of MI = ACS cannot be excluded. But the presentation is atypical (pleuritic, non-radiating, no diaphoresis, ambulatory). Vitals stable. Defensible to assign ESI 2 (low-threshold cardiac workup, observation, serial troponins) or ESI 3 (lower-risk pathway, ECG + single troponin then discharge if negative). Many EDs default to ESI 2 for any 'chest pain' in middle-aged smokers; some use HEART score to triage. Both defensible."
+}

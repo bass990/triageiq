@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_1_2_006",
+  "tier": "clear_esi_1_2",
+  "description": "Active status epilepticus on EMS arrival in a 28-year-old.",
+  "patient": {
+    "name": "David K., 28M",
+    "chief_complaint": "Witnessed generalized tonic-clonic seizure activity for over 8 minutes continuous. Status epilepticus. Two doses of IM midazolam given by EMS without resolution. No previous seizure history reported.",
+    "vitals": {"bp": "168/95", "hr": 132, "rr": 28, "spo2": 88, "temp": 38.4, "gcs": 3},
+    "history": "Unknown - presumed first-time seizure per witness",
+    "allergies": "Unknown",
+    "arrival": "EMS"
+  },
+  "expected_esi": 1,
+  "acceptable_esi": [1],
+  "expected_care_areas": ["resus", "trauma_bay"],
+  "expected_critical_flags": ["seizure_active", "airway"],
+  "rubric_notes": "Status epilepticus by definition (continuous seizure >5min OR failure to recover between seizures). Critical vitals: HR >130, RR >20 concerning, SpO2 <90 critical, GCS 3 critical. Airway at risk (post-ictal aspiration, hypoventilation). Per RUBRIC §3 status epilepticus = ESI 2 minimum; with airway compromise (SpO2 <90 + GCS 3) elevates to ESI 1. Lorazepam IV + phenytoin loading + airway management."
+}

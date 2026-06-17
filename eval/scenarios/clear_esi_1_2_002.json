@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_1_2_002",
+  "tier": "clear_esi_1_2",
+  "description": "Acute stroke FAST positive in a 72-year-old woman within tPA window.",
+  "patient": {
+    "name": "Margaret L., 72F",
+    "chief_complaint": "Sudden onset facial droop on right side, slurred speech, and right arm weakness 25 minutes ago. Witnessed by spouse at onset. Cannot raise right arm to shoulder level.",
+    "vitals": {"bp": "175/95", "hr": 88, "rr": 18, "spo2": 96, "temp": 37.0, "gcs": 14},
+    "history": "Atrial fibrillation on apixaban, HTN, hyperlipidemia",
+    "allergies": "None",
+    "arrival": "EMS"
+  },
+  "expected_esi": 2,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["resus", "trauma_bay"],
+  "expected_critical_flags": ["stroke", "fast"],
+  "rubric_notes": "Three FAST positives (Face, Arm, Speech) within the 4.5-hour tPA window. GCS 14 concerning (mild altered mental status). HTN at 175/95 typical of acute stroke. Per RUBRIC §3 stroke FAST positive mandates ESI 1-2. Time-critical: every minute of delay = 1.9M neurons lost. Atrial fib + apixaban = cardioembolic stroke until proven otherwise."
+}

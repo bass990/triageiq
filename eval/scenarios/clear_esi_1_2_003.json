@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_1_2_003",
+  "tier": "clear_esi_1_2",
+  "description": "Septic shock with classic triad (fever + hypotension + altered mental status) in a 58-year-old post-catheterization patient.",
+  "patient": {
+    "name": "Marcus J., 58M",
+    "chief_complaint": "Fever, rigors, confusion, and dysuria for 3 days. Now hypotensive and minimally responsive. Had urinary catheterization 1 week ago.",
+    "vitals": {"bp": "82/50", "hr": 124, "rr": 28, "spo2": 91, "temp": 39.6, "gcs": 11},
+    "history": "BPH, type 2 diabetes, recent urinary catheterization",
+    "allergies": "Vancomycin",
+    "arrival": "EMS"
+  },
+  "expected_esi": 1,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["resus", "trauma_bay"],
+  "expected_critical_flags": ["sepsis", "septic_shock"],
+  "rubric_notes": "Classic septic shock: temp 39.6 + SBP 82 + GCS 11 + tachycardic + tachypneic + hypoxic. ALL three sepsis-triad criteria positive. Multiple critical vitals (SBP <90, HR >100 borderline tachy, RR >20 concerning, SpO2 <94 concerning, temp >38.3 fever, GCS <14 altered). Per RUBRIC §3 sepsis with hypotension = ESI 1 mandatory. Sepsis 3-Hour Bundle starts NOW (blood cultures + lactate + IV antibiotics within 1 hour). Vancomycin allergy = critical med-allergy flag."
+}

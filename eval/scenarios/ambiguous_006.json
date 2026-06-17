@@ -1,0 +1,18 @@
+{
+  "id": "ambiguous_006",
+  "tier": "ambiguous",
+  "description": "Anxiety-related chest tightness in young adult; defensible ESI 3 (rule out cardiac) or ESI 4 (clear anxiety pattern).",
+  "patient": {
+    "name": "Brian L., 24M",
+    "chief_complaint": "Chest tightness with sensation of impending doom and shortness of breath for 45 minutes during work meeting. Known anxiety disorder with prior panic attacks of similar pattern. Symptoms abating now after leaving the meeting. No diaphoresis.",
+    "vitals": {"bp": "132/82", "hr": 98, "rr": 22, "spo2": 99, "temp": 36.8, "gcs": 15},
+    "history": "Generalized anxiety disorder on sertraline, history of panic attacks, no cardiac risk factors, no family history of premature CAD",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 3,
+  "acceptable_esi": [3, 4],
+  "expected_care_areas": ["fast_track", "general"],
+  "expected_critical_flags": ["acs"],
+  "rubric_notes": "Young adult with known anxiety + classic panic pattern + improving symptoms = high probability anxiety/panic. BUT chest tightness in any patient warrants at minimum an ECG + reassurance. Defensible ESI 3 (rule out cardiac with ECG + troponin = 2 resources) or ESI 4 (low pretest probability, single resource ECG sufficient). 'Anxiety attack' is one of the most common chief complaints; not under-triaging cardiac is the rubric's key discipline. RR 22 mildly concerning but consistent with anxiety/hyperventilation."
+}

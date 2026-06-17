@@ -87,10 +87,30 @@ If a real ED were to use this, it would be a **fourth opinion** alongside the tr
 
 Things this system is NOT, that an interviewer should know up front:
 
-1. **Not clinically validated.** Zero real patients have been triaged through this system. The ESI classifications it produces have not been compared against trained-triage-nurse ground truth on a held-out patient set. Without that validation, every claim about "accuracy" is unmeasured.
-2. **Mock patient data only.** All patients live in a local JSON store, no real PHI, no HIPAA-compliant storage, no consent flow. The architecture is shaped *as if* the input came from EHR integration; the integration is not built.
-3. **No eval harness yet.** The single highest-value Phase 2 upgrade is a gold-case eval set: ~50 patient presentations with known-correct ESI from trained nurses, scored on agreement rate per ESI level and disagreement-direction (overtriage vs undertriage are not equally costly). Currently judged by inspection on PT-001 through PT-005.
-4. **Tiered-model cost/accuracy tradeoff is unmeasured.** Specialists run on Haiku for cost. Whether Haiku specialists produce specialist-level findings as good as Sonnet specialists is an empirical question the eval harness would answer. Currently I am assuming the answer is yes; I should not be.
+1. **Eval-validated A/B: SAFE on critical-miss rate, but does NOT earn its complexity on accuracy.** A 30-scenario eval harness across 5 tiers (clear_esi_1_2, clear_esi_4_5, ambiguous, critical_miss_test, adversarial including prompt injection in chief-complaint AND patient-name fields) ran 630 LLM calls across 180 scored runs (30 scenarios × 2 branches × 3 reps, $6.07, **0 errors**, ~117 min). See `eval/` for the full methodology + RUBRIC.md (committed before any scenarios were labeled).
+
+   **Safety headline (the load-bearing metric):** **critical-miss rate is 0% on BOTH branches.** Neither the 4-specialist tiered architecture nor a single-Sonnet baseline missed a single high-acuity patient across 13 high-acuity scenarios × 3 reps = 39 chances to under-triage. **Including all 5 atypical critical_miss_test scenarios** (silent MI in elderly diabetic, posterior stroke without FAST, occult geriatric sepsis without fever, PE with normal SpO2, slow-leak AAA with stable vitals) AND **all 6 adversarial scenarios** (prompt injection in chief complaint, prompt injection in patient name, anaphylaxis post-EpiPen with normal vitals, cardiac arrest with missing vitals, long-vague-with-buried-critical, demographic-spoofing opener). Both branches resisted every adversarial test 3/3 reps each.
+
+   **But per-metric breakdown reveals the architectures are NOT interchangeable:**
+
+   | Metric | FULL | STRIPPED | Lift | Read |
+   |---|---|---|---|---|
+   | Critical-miss rate (lower=better) | 0.0% | 0.0% | 0pp | Tied — both safe on the load-bearing metric |
+   | ESI strict accuracy | 97.8% | 100.0% | **-2.2pp** | Equivalent; FULL's single deficit is ambiguous_006 (anxious chest tightness) where it over-triaged ESI 2 vs rubric-accepted ESI 3-4 |
+   | ESI ±1 lenient | 100.0% | 100.0% | 0pp | Tied |
+   | Overtriage rate (lower=better) | 0.0% | 0.0% | 0pp | Tied |
+   | Care-area accuracy | 74.2% | 94.4% | **-20.2pp** | **STRIPPED wins significantly.** The specialist Bed Allocator often conflicts with the Synthesizer's care-area choice; the single-Sonnet baseline assigns beds more consistently |
+   | Critical-flag coverage | 87.5% | 74.8% | **+12.7pp** | **FULL wins.** The specialist SYMPTOM_PROMPT explicitly enumerates red flags; richer documentation in the audit trail |
+
+   **Architectural recommendation surfaced by the eval:** the 4-specialist pipeline is SAFE but does not earn its complexity on accuracy. STRIPPED is the better production choice for ESI classification + care-area assignment. FULL's only measurable advantage is +12.7pp critical-flag enumeration, which has audit/documentation value but no accuracy benefit. **For a production rewrite, collapse to a single Sonnet call unless the richer red-flag documentation in the audit trail is a hard requirement** (in which case keep the Symptom specialist only, drop Vitals + Protocol + Bed + Coordinator).
+
+   This is a useful negative result. Building the specialist architecture taught the design but the eval showed a single Sonnet call has the same safety profile at 1/5 the LLM calls.
+
+   Reproduce: `make eval` from `triageiq/` with `ANTHROPIC_API_KEY` set.
+
+2. **Still not clinically validated.** The eval scores against the published rubric (RUBRIC.md), NOT against ground-truth ED outcomes. Use the eval result for architectural decisions, not for clinical claims. Real deployment would require IRB approval, partner-hospital validation, and inter-rater reliability work with trained ED nurses.
+3. **Mock patient data only.** All patients live in scenario JSONs and a local store. No real PHI, no HIPAA-compliant storage, no consent flow. The architecture is shaped *as if* the input came from EHR integration; the integration is not built.
+4. **Tiered-model cost/accuracy tradeoff is NOW measured.** The eval confirms Haiku specialists produce findings the Sonnet Synthesizer can use without safety degradation — but also that the Synthesizer-alone (STRIPPED) does just as well without them on the safety metric. The original assumption "tiering saves cost without quality loss" is technically vindicated AND the architecture is shown to be unnecessary at the same time.
 5. **Single language, single-protocol set.** English chief complaints only. The protocol KB is a small hardcoded set; real EDs have hundreds of protocols indexed by chief complaint × age × comorbidity.
 6. **No clinical-liability framework.** A real ED deployment would need an institutional review (IRB), insurance coverage for the decision-support tool, EHR-vendor partnership, and a careful agreement with the medical staff that defines exactly what the tool's recommendations mean inside their workflow. None of these exist; pretending the code is what matters here would miss the point.
 7. **No live deploy.** Standing this up publicly would require API keys, and exposing a triage simulator on the open internet has its own risks (people typing real symptoms expecting real advice). Local-only is deliberate.

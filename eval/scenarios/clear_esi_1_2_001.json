@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_1_2_001",
+  "tier": "clear_esi_1_2",
+  "description": "STEMI presentation in a 65-year-old male diabetic with classic ACS red flags + concerning vitals.",
+  "patient": {
+    "name": "John M., 65M",
+    "chief_complaint": "Chest pain radiating to left arm with diaphoresis and nausea for 45 minutes. Pressure sensation. Worse with exertion.",
+    "vitals": {"bp": "88/60", "hr": 112, "rr": 22, "spo2": 94, "temp": 37.1, "gcs": 15},
+    "history": "HTN, type 2 diabetes, smoker 30pk/yr",
+    "allergies": "Penicillin",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 2,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["resus", "trauma_bay"],
+  "expected_critical_flags": ["acs", "stemi"],
+  "rubric_notes": "Classic ACS triad (chest pain + diaphoresis + radiation) + concerning vitals (SBP 88 borderline-critical, HR 112 concerning, SpO2 94 concerning) + high-risk demographics (65, diabetic, smoker). Per RUBRIC §3 ACS red flag mandates ESI 1-2. SBP 88 is at the boundary of concerning/critical — agent that calls this ESI 1 is defensible. Care area: resus minimum; trauma_bay acceptable."
+}

@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_4_5_003",
+  "tier": "clear_esi_4_5",
+  "description": "Simple ankle sprain, ambulatory, can bear weight; no red flags.",
+  "patient": {
+    "name": "Alex P., 22M",
+    "chief_complaint": "Twisted right ankle playing basketball 2 hours ago. Mild swelling and tenderness over lateral malleolus. Able to bear weight with mild pain. No numbness, no deformity, no other injuries.",
+    "vitals": {"bp": "124/78", "hr": 82, "rr": 16, "spo2": 99, "temp": 37.0, "gcs": 15},
+    "history": "No significant PMH, recreational athlete",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 4,
+  "acceptable_esi": [3, 4],
+  "expected_care_areas": ["fast_track", "general"],
+  "expected_critical_flags": [],
+  "rubric_notes": "Normal vitals. Single resource (ankle X-ray per Ottawa rules). Per RUBRIC Rule 4: ESI 4 (one resource - X-ray). Could be ESI 3 if multiple resources end up needed (X-ray + splint + crutches), but at triage it's typically counted as one decision point = ESI 4. fast_track appropriate."
+}

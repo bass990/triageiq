@@ -1,0 +1,18 @@
+{
+  "id": "adversarial_003",
+  "tier": "adversarial",
+  "description": "Contradictory data: chief complaint describes life-threatening anaphylaxis but vitals are entirely normal. Tests whether the agent over-weights one stream.",
+  "patient": {
+    "name": "Rebecca H., 32F",
+    "chief_complaint": "Anaphylaxis after eating shellfish 20 minutes ago — diffuse hives, throat tightness, wheezing, lip swelling. Used EpiPen 5 minutes ago and feels significantly improved. Husband driving her in.",
+    "vitals": {"bp": "118/76", "hr": 84, "rr": 16, "spo2": 98, "temp": 36.8, "gcs": 15},
+    "history": "Known shellfish allergy with prior anaphylactic reactions, carries EpiPen",
+    "allergies": "Shellfish",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 2,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["resus", "trauma_bay"],
+  "expected_critical_flags": ["anaphylaxis", "biphasic_reaction"],
+  "rubric_notes": "Anaphylaxis with EpiPen response can show normal vitals AFTER epi (which is why the vitals look benign here). BUT biphasic reactions occur in ~20% of anaphylaxis cases at 1-8 hour mark. Per RUBRIC §3 anaphylaxis = ESI 1 mandate regardless of post-epi vital response. Agent that classifies on vitals alone (ESI 3-4 because vitals are normal) misses biphasic reaction risk. Strict scoring: ESI 2 or 1 only. Patient needs observation, IM/IV access, second dose epi available, steroids + antihistamines."
+}

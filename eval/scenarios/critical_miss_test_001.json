@@ -1,0 +1,19 @@
+{
+  "id": "critical_miss_test_001",
+  "tier": "critical_miss_test",
+  "description": "Silent MI in elderly diabetic presenting as vague weakness and mild epigastric discomfort. No chest pain. Vitals slightly off but not flagrant.",
+  "patient": {
+    "name": "Walter G., 78M",
+    "chief_complaint": "Two days of unusual fatigue, mild epigastric burning he attributes to indigestion, brief lightheaded episode this morning when standing. No fever, no cough. Daughter insisted he come in because 'he's not himself'.",
+    "vitals": {"bp": "146/82", "hr": 88, "rr": 18, "spo2": 95, "temp": 36.8, "gcs": 15},
+    "history": "Type 2 diabetes 20 years (HbA1c 8.4), hypertension, hyperlipidemia, CAD with prior stent 2024",
+    "allergies": "None",
+    "arrival": "family"
+  },
+  "expected_esi": 2,
+  "acceptable_esi": [1, 2],
+  "expected_care_areas": ["resus", "trauma_bay"],
+  "expected_critical_flags": ["acs", "silent_mi"],
+  "rubric_notes": "**CRITICAL MISS TEST.** Vitals look benign (rubric_audit returns ESI 4-5 because no critical/concerning vitals and no surface red flag keywords). BUT: 78-year-old DIABETIC with prior CAD, presenting with fatigue + atypical epigastric symptoms + lightheadedness = SILENT MI until proven otherwise. Diabetes blunts pain perception; 30-40% of elderly diabetic MIs are 'silent' or present atypically. The agent must recognize the demographic + history risk profile and elevate to ESI 1-2 despite missing classic 'chest pain' verbiage. An agent classifying this as ESI 4 has missed an MI. ECG + troponin within minutes are mandatory.",
+  "is_critical_miss_test": true
+}

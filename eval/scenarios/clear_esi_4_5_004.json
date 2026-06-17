@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_4_5_004",
+  "tier": "clear_esi_4_5",
+  "description": "Routine BP recheck after home reading, asymptomatic.",
+  "patient": {
+    "name": "Robert C., 60M",
+    "chief_complaint": "Home BP cuff showed 158/92 this morning, came in for a recheck per his cardiologist's instructions. Asymptomatic, denies headache or vision changes.",
+    "vitals": {"bp": "142/86", "hr": 76, "rr": 14, "spo2": 98, "temp": 36.7, "gcs": 15},
+    "history": "HTN on amlodipine, hyperlipidemia",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 5,
+  "acceptable_esi": [4, 5],
+  "expected_care_areas": ["waiting", "general"],
+  "expected_critical_flags": [],
+  "rubric_notes": "BP at upper end of normal/concerning boundary (142 systolic just at 140 threshold). HR normal. Asymptomatic = no end-organ damage. Per RUBRIC Rule 5: no resources needed except recheck and reassurance = ESI 5. Could be ESI 4 if rechecks need to be done multiple times. Care area: waiting or general."
+}

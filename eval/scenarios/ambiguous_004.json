@@ -1,0 +1,18 @@
+{
+  "id": "ambiguous_004",
+  "tier": "ambiguous",
+  "description": "Geriatric weakness and decreased appetite without clear localization; defensible ESI 2 or 3.",
+  "patient": {
+    "name": "Dorothy W., 78F",
+    "chief_complaint": "General weakness, mild confusion baseline-changed, decreased appetite 2 days. Family says 'just not acting right'. Walking with assistance now whereas independent yesterday.",
+    "vitals": {"bp": "108/68", "hr": 96, "rr": 18, "spo2": 96, "temp": 37.9, "gcs": 14},
+    "history": "Type 2 diabetes, hypertension, mild dementia at baseline, on metformin + lisinopril",
+    "allergies": "Sulfa drugs",
+    "arrival": "family"
+  },
+  "expected_esi": 2,
+  "acceptable_esi": [2, 3],
+  "expected_care_areas": ["resus", "fast_track"],
+  "expected_critical_flags": [],
+  "rubric_notes": "Geriatric 'not acting right' with baseline change = elevated risk floor. Differential includes occult sepsis (UTI/pneumonia), silent MI, stroke, hypoglycemia, dehydration. Temp 37.9 borderline fever, HR 96 just under tachycardia threshold, GCS 14 (baseline-changed mental status = critical per RUBRIC). Defensible ESI 2 (geriatric occult sepsis until ruled out) or ESI 3 (stable enough for general bed workup). The 'baseline-changed' mental status (GCS 14 from baseline 15) per RUBRIC §2 is concerning."
+}

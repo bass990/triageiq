@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "triageiq"
+version = "0.1.0"
+description = "TriageIQ: 5-specialist ER triage decision-support system"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.40.0",
+    "fastapi>=0.110",
+    "uvicorn>=0.27",
+    "pydantic>=2.8",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[tool.setuptools.packages.find]
+include = ["backend*", "eval*"]
+exclude = ["tests*", "frontend*", "docs*", "scripts*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

@@ -1,0 +1,18 @@
+{
+  "id": "clear_esi_4_5_001",
+  "tier": "clear_esi_4_5",
+  "description": "Stable patient requesting routine medication refill; no acute complaints.",
+  "patient": {
+    "name": "Linda M., 50F",
+    "chief_complaint": "Routine refill of lisinopril and atorvastatin requested. Out of medication for 2 days, no symptoms. PCP unavailable until next week.",
+    "vitals": {"bp": "128/78", "hr": 72, "rr": 14, "spo2": 99, "temp": 36.7, "gcs": 15},
+    "history": "HTN well-controlled, hyperlipidemia",
+    "allergies": "None",
+    "arrival": "walk-in"
+  },
+  "expected_esi": 5,
+  "acceptable_esi": [4, 5],
+  "expected_care_areas": ["waiting", "general"],
+  "expected_critical_flags": [],
+  "rubric_notes": "ALL vitals normal. No acute complaint. Single resource (prescription) at most. Per RUBRIC Rule 5 ESI 5 (no resources, just discharge with prescription); could also be ESI 4 if a single resource is required (prescription = one resource). Care area: waiting or general. Tests overtriage tendency."
+}
