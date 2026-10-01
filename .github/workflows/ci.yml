@@ -60,7 +60,7 @@ jobs:
         run: |
           docker run -d --name tq -p 8001:8001 -e TRIAGEIQ_DEMO=1 triageiq:ci
           for i in $(seq 1 30); do curl -sf http://localhost:8001/health && break; sleep 1; done
-          curl -sf http://localhost:8001/health | grep -q '"demo": true'
+          curl -sf http://localhost:8001/health | grep -q '"demo":true'
           curl -sf http://localhost:8001/config | grep -q pipeline
           curl -sf http://localhost:8001/patients | grep -q PT-001
           curl -sf http://localhost:8001/ | grep -qi "<div id=\"root\""
