@@ -1,0 +1,220 @@
+{
+  "recorded_at": "2026-09-29T07:42:33.963219+00:00",
+  "model": "claude-sonnet-5",
+  "pipeline": "lean",
+  "patient": "PT-005",
+  "events": [
+    {
+      "event": "status",
+      "step": 0,
+      "total": 7,
+      "message": "Starting triage...",
+      "pipeline": "lean"
+    },
+    {
+      "event": "status",
+      "step": 1,
+      "total": 7,
+      "message": "Retrieving patient data...",
+      "agent": "coordinator"
+    },
+    {
+      "event": "status",
+      "step": 2,
+      "total": 7,
+      "message": "Running Symptom Classifier...",
+      "agent": "vitals",
+      "active_agents": [
+        "symptoms"
+      ],
+      "skipped_agents": [
+        "vitals",
+        "protocols",
+        "beds"
+      ]
+    },
+    {
+      "event": "status",
+      "step": 3,
+      "total": 7,
+      "message": "Symptom Classifier complete",
+      "agent": "symptoms",
+      "agent_done": "symptoms"
+    },
+    {
+      "event": "status",
+      "step": 6,
+      "total": 7,
+      "message": "Synthesizing final triage decision...",
+      "agent": "synthesizer",
+      "active_agents": [
+        "synthesizer"
+      ]
+    },
+    {
+      "event": "status",
+      "step": 7,
+      "total": 7,
+      "message": "Triage complete.",
+      "agent": "done"
+    },
+    {
+      "event": "trace",
+      "request_id": "bacdc7597010",
+      "pipeline": "lean",
+      "llm_calls": 2,
+      "input_tokens": 2292,
+      "output_tokens": 2007,
+      "cache_write_tokens": 0,
+      "cache_read_tokens": 1807,
+      "cost_usd": 0.0313,
+      "llm_latency_s": 22.07,
+      "wall_time_s": 22.07,
+      "parse_failures": 0,
+      "degraded": false,
+      "calls_by_stage": {
+        "symptoms": {
+          "calls": 1,
+          "cost_usd": 0.00311,
+          "latency_s": 5.7
+        },
+        "synthesizer": {
+          "calls": 1,
+          "cost_usd": 0.02818,
+          "latency_s": 16.37
+        }
+      }
+    },
+    {
+      "event": "status",
+      "step": 7,
+      "total": 7,
+      "message": "Done!"
+    },
+    {
+      "event": "complete",
+      "report": {
+        "esi_score": 2,
+        "care_area": "resus",
+        "patient_summary": "72F diabetic with new confusion, fever, and 2-day anorexia \u2014 likely occult sepsis vs. atypical ACS/stroke presentation in an elderly diabetic.",
+        "red_flags": [
+          "<parameter name=\"value\">[\"GCS 13 (acute confusion) in elderly diabetic: possible sepsis, stroke, or silent MI\", \"Temp 38.1\u00b0C + HR 98 + 2-day poor oral intake: possible early sepsis/occult infection\", \"Age 72 + diabetes + dementia + vague 'not acting right' presentation: high risk for atypical/silent ACS or CVA, must not be under-triaged\", \"Relative hypotension (BP 104/68) for likely baseline hypertensive patient on lisinopril: possible early compensated shock\", \"No focal neuro deficit documented yet: stroke not excluded, urgent CT head needed\"]</parameter>",
+          "<parameter name=\"action_checklist\">[\"Immediate physician/senior nurse evaluation - treat as time-critical\", \"Obtain 12-lead ECG within 10 minutes to rule out silent MI\", \"Draw blood cultures, lactate, CBC, BMP, troponin before antibiotics\", \"Start broad-spectrum IV antibiotics per sepsis protocol if source suspected (avoid sulfa given allergy)\", \"IV fluid bolus (crystalloid) given relative hypotension, reassess after bolus\", \"STAT CT head to evaluate for acute stroke given confusion/GCS 13\", \"Fingerstick glucose immediately (diabetic, on metformin, poor intake x2 days - risk of hypo/hyperglycemia)\", \"Continuous cardiac and SpO2 monitoring, reassess GCS frequently\"]</parameter>",
+          "<parameter name=\"vitals_findings\">BP 104/68 (relatively low for likely hypertensive baseline), HR 98 (mild tachycardia), RR 18, SpO2 96%, Temp 38.1\u00b0C (low-grade fever), GCS 13 (acute altered mental status) \u2014 collectively concerning for early sepsis, occult infection, or atypical cardiac/neuro event rather than reassuring."
+        ],
+        "action_checklist": [],
+        "vitals_findings": "",
+        "symptom_findings": "Vague constitutional complaint (weakness, confusion, anorexia x2 days) without classic chest pain or dyspnea \u2014 classic under-triage trap in elderly diabetics who present atypically for MI, stroke, or sepsis. Family-reported \"not acting right\" combined with fever and altered GCS meets high-risk criteria despite lack of focal symptoms.",
+        "protocol_findings": "Matched protocols (ACS/Chest Pain, Trauma/Orthopedic) do not fit this presentation and are disregarded. Working protocol should be Sepsis/Altered Mental Status workup: blood cultures, lactate, broad-spectrum antibiotics (avoid sulfa), IV fluids, ECG to exclude silent MI, and CT head to exclude stroke, given absence of a validated sepsis-specific protocol in the record.",
+        "bed_recommendation": "Resuscitation bay with continuous cardiac/SpO2 monitoring, two large-bore IVs, physician at bedside within 10 minutes; stat labs (CBC, BMP, lactate, troponin, blood cultures), 12-lead ECG, and CT head; sepsis and stroke consults on standby, cardiology consult if ECG abnormal.",
+        "confidence": 0.7,
+        "rationale": "ESI 2 is warranted because this elderly diabetic presents with acute altered mental status (GCS 13), fever, and vague systemic symptoms \u2014 a high-risk, atypical presentation pattern that can mask sepsis, silent MI, or stroke, any of which requires immediate work-up. It is not ESI 1 because there is no immediate need for airway/circulatory life-saving intervention (patient is not in arrest or profound shock), but it cannot be downgraded to ESI 3 given the red flags for potential silent life-threatening pathology in a vulnerable elderly diabetic with dementia (confounding baseline mental status).",
+        "esi_label": "Emergent",
+        "esi_color": "#EA580C",
+        "confidence_score": 0.7,
+        "timestamp": "2026-09-29T07:42:33.938633+00:00",
+        "generated_by": "TriageIQ",
+        "degraded": false,
+        "vitals_raw": {
+          "bp": "104/68",
+          "hr": 98,
+          "rr": 18,
+          "spo2": 96,
+          "temp": 38.1,
+          "gcs": 13
+        },
+        "vitals_trends": {
+          "hr": [
+            96.2,
+            99.5,
+            97.2,
+            99.5,
+            98.4,
+            98
+          ],
+          "spo2": [
+            96.3,
+            96.0,
+            95.7,
+            96.2,
+            95.7,
+            96
+          ],
+          "rr": [
+            18.0,
+            18.4,
+            18.5,
+            17.6,
+            17.7,
+            18
+          ],
+          "temp": [
+            37.5,
+            37.6,
+            37.8,
+            37.9,
+            38.0,
+            38.1
+          ],
+          "gcs": [
+            15,
+            15,
+            14,
+            14,
+            13,
+            13
+          ],
+          "bp_sys": [
+            103.1,
+            106.9,
+            105.2,
+            104.4,
+            103.5,
+            104.0
+          ]
+        },
+        "vitals_detail": "",
+        "symptom_detail": "# SYMPTOM CLASSIFIER ASSESSMENT\n\n## RED FLAGS:\n- **72-year-old diabetic with vague weakness, confusion, and anorexia + fever (38.1\u00b0C) + altered mental status (GCS 13)**: possible occult sepsis, silent MI, or acute stroke\u2014atypical presentations in elderly diabetics are high-risk\n- **Fever + mild tachycardia + anorexia \u00d7 2 days**: possible infection (UTI, pneumonia, other occult source) with early sepsis\n- **GCS 13 (confusion)**: baseline mental status unknown; acute change is concerning and requires urgent workup\n\n## DIFFERENTIAL:\n1. **Sepsis / occult infection** (UTI, aspiration pneumonia, intra-abdominal source)\u2014fever + confusion + \"not acting right\" in elderly diabetic\n2. **Silent acute coronary syndrome (MI)**\u2014elderly diabetics often present atypically without chest pain; weakness and confusion can be anginal equivalents\n3. **Acute stroke** (posterior circulation, lacunar)\u2014confusion, weakness, and anorexia can mask CVA; no focal deficits documented yet\n\n## URGENCY:\n**1 \u2013 CRITICAL EMERGENCY**\n\nThis is an elderly diabetic with vague constitutional symptoms (weakness, confusion, anorexia), low-grade fever, and altered mental status. The combination of \"not acting right\" + any abnormal vital + age + comorbidities is a classic under-triage trap. This patient requires immediate senior evaluation, 12-lead ECG, blood cultures, CBC/BMP/lactate, and consideration of imaging (CT head if focal neuro signs or persistent altered mental status). Do NOT downgrade based on absence of classic \"chest pain\" or \"shortness of breath.\"\n\n---\n**Note:** The protocols returned (ACS and Trauma/Orthopedic) are not aligned with this presentation and should be disregarded in favor of sepsis/occult emergency workup.",
+        "protocol_detail": "Matched by keyword: ACS / Chest Pain Protocol, Trauma / Orthopedic Protocol\n\n(specialist not run in the lean pipeline; see the Synthesizer's findings above)",
+        "bed_detail": "Resuscitation bay with continuous cardiac/SpO2 monitoring, two large-bore IVs, physician at bedside within 10 minutes; stat labs (CBC, BMP, lactate, troponin, blood cultures), 12-lead ECG, and CT head; sepsis and stroke consults on standby, cardiology consult if ECG abnormal.\n\n(specialist not run in the lean pipeline; see the Synthesizer's findings above)",
+        "patient_name": "Dorothy W., 72F",
+        "run_id": "TRG-ADF6CF23",
+        "pipeline": "lean",
+        "specialists_run": [
+          "symptoms"
+        ],
+        "sanitization": {
+          "name_tokenized": true,
+          "suspected_injections": {}
+        },
+        "trace": {
+          "request_id": "bacdc7597010",
+          "pipeline": "lean",
+          "llm_calls": 2,
+          "input_tokens": 2292,
+          "output_tokens": 2007,
+          "cache_write_tokens": 0,
+          "cache_read_tokens": 1807,
+          "cost_usd": 0.0313,
+          "llm_latency_s": 22.07,
+          "wall_time_s": 22.07,
+          "parse_failures": 0,
+          "degraded": false,
+          "calls_by_stage": {
+            "symptoms": {
+              "calls": 1,
+              "cost_usd": 0.00311,
+              "latency_s": 5.7
+            },
+            "synthesizer": {
+              "calls": 1,
+              "cost_usd": 0.02818,
+              "latency_s": 16.37
+            }
+          }
+        },
+        "confidence_label": "MEDIUM"
+      }
+    }
+  ]
+}

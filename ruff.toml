@@ -16,4 +16,6 @@ ignore = [
 ]
 
 [lint.per-file-ignores]
-"tests/*" = ["PLR2004", "F841"]
+"tests/*" = ["PLR2004", "F841", "E402", "PLC0415"]
+"backend/*" = ["E402", "PLC0415"]
+"scripts/*" = ["E402"]

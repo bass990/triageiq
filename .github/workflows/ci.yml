@@ -6,30 +6,64 @@ on:
   pull_request:
     branches: [main]
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11"]
+# Every push/PR: lint, the offline test suite (fake Anthropic client), the
+# regression gate on the committed eval baseline, a frontend build, and a
+# Docker smoke test in demo-replay mode. Nothing here calls the model; the
+# live eval is the manual-trigger eval.yml workflow.
 
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dev dependencies
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-
       - name: Lint
-        run: python -m ruff check eval/ tests/
-
-      - name: Test (zero LLM calls)
+        run: python -m ruff check backend/ eval/ tests/ scripts/
+      - name: Tests (no model calls)
         env:
-          PYTHONPATH: .
+          ANTHROPIC_API_KEY: "test-key-only-used-for-import"
         run: python -m pytest tests/ -q
+      - name: Regression gate on committed eval baseline
+        run: python -m eval.regression_check
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+
+  docker-demo:
+    runs-on: ubuntu-latest
+    needs: [lint-and-test]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t triageiq:ci .
+      - name: Smoke test demo replay (no API key)
+        run: |
+          docker run -d --name tq -p 8001:8001 -e TRIAGEIQ_DEMO=1 triageiq:ci
+          for i in $(seq 1 30); do curl -sf http://localhost:8001/health && break; sleep 1; done
+          curl -sf http://localhost:8001/health | grep -q '"demo": true'
+          curl -sf http://localhost:8001/config | grep -q pipeline
+          curl -sf http://localhost:8001/patients | grep -q PT-001
+          curl -sf http://localhost:8001/ | grep -qi "<div id=\"root\""
+          curl -sN --max-time 60 http://localhost:8001/triage/stream/PT-001 | grep -q "event: complete"
+          docker logs tq | tail -20
+          docker rm -f tq

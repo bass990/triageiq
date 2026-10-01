@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:8001";
+// Same-origin when served by the API container (VITE_API_URL=""), localhost in dev.
+const API = import.meta.env.VITE_API_URL ?? "http://localhost:8001";
 
 const ESI_CONFIG = {
   1: { label: "ESI 1 — Immediate",   color: "#EF4444", bg: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.25)" },
@@ -19,6 +20,13 @@ const AGENT_LABELS = {
   beds:        "Bed Allocator",
   synthesizer: "Synthesizer",
 };
+
+const SunIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+);
+const MoonIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+);
 
 function renderMarkdown(text) {
   if (!text) return null;
@@ -170,7 +178,20 @@ function NurseOverride({ currentESI, onOverride, override }) {
   );
 }
 
-function ConversationChat({ report }) {
+function ConversationChat({ report, demo }) {
+  if (demo) {
+    return (
+      <div className="chat-disabled">
+        <div className="detail-label">Ask AI</div>
+        <p>Follow-up chat needs a live model and is switched off in demo replay mode. Run the app with an
+        <code>ANTHROPIC_API_KEY</code> to ask about the reasoning, protocol steps or why this ESI was assigned.</p>
+      </div>
+    );
+  }
+  return <ConversationChatLive report={report} />;
+}
+
+function ConversationChatLive({ report }) {
   const [messages, setMessages] = useState([
     { role: "assistant", text: "Triage complete. Ask me anything about this patient — the clinical reasoning, protocol steps, or why I assigned this ESI score." }
   ]);
@@ -261,20 +282,23 @@ function printReport(report, override, confidence) {
   setTimeout(() => win.print(), 300);
 }
 
-function AgentStatus({ activeAgents, completedAgents, agentTimes }) {
+function AgentStatus({ activeAgents, completedAgents, agentTimes, skippedAgents = [] }) {
   return (
     <div className="agent-grid">
       {Object.entries(AGENT_LABELS).map(([key, label]) => {
         const isActive = activeAgents.includes(key);
         const isDone = completedAgents.includes(key);
+        const isSkipped = skippedAgents.includes(key);
         return (
-          <div key={key} className={`agent-card ${isActive ? "active" : ""} ${isDone ? "done" : ""}`}>
+          <div key={key} className={`agent-card ${isActive ? "active" : ""} ${isDone ? "done" : ""} ${isSkipped ? "skipped" : ""}`}
+            title={isSkipped ? "Not run in the lean pipeline (eval showed no safety benefit)" : ""}>
             <div className="agent-indicator">
               {isDone ? (
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
               ) : isActive ? <div className="agent-spinner"/> : <div className="agent-dot"/>}
             </div>
             <span className="agent-label">{label}</span>
+            {isSkipped && <span className="agent-time">skipped</span>}
             {isDone && agentTimes?.[key] && <span className="agent-time">{agentTimes[key]}s</span>}
           </div>
         );
@@ -283,12 +307,45 @@ function AgentStatus({ activeAgents, completedAgents, agentTimes }) {
   );
 }
 
-function TriageReport({ report }) {
+// Run trace: the numbers a reviewer asks for (calls, cost, latency, mode).
+function TraceFooter({ report, demoRecordedAt }) {
+  const t = report?.trace;
+  if (!t) return null;
+  const stages = Object.entries(t.calls_by_stage || {});
+  const inj = report.sanitization?.suspected_injections || {};
+  const recorded = demoRecordedAt ? new Date(demoRecordedAt).toISOString().slice(0, 10) : null;
+  return (
+    <div className="trace-footer">
+      {recorded && (
+        <div className="trace-replay-note">
+          ▶ Replayed trace recorded {recorded}. The calls, cost and latency below are from that recording; this session made no model calls.
+        </div>
+      )}
+      <div className="trace-row">
+        <span><strong>{report.pipeline}</strong> pipeline</span>
+        <span><strong>{t.llm_calls}</strong> LLM calls</span>
+        <span><strong>${(t.cost_usd ?? 0).toFixed(4)}</strong></span>
+        <span><strong>{t.llm_latency_s ?? 0}s</strong> model · <strong>{t.wall_time_s ?? 0}s</strong> wall</span>
+        {t.parse_failures > 0 && <span className="trace-warn">{t.parse_failures} schema repair(s)</span>}
+        {report.degraded && <span className="trace-warn">degraded rule-based mode</span>}
+        {report.sanitization?.name_tokenized && <span>name tokenised before prompts</span>}
+        {Object.keys(inj).length > 0 && <span className="trace-warn">⚠ instruction-like text in {Object.keys(inj).join(", ")}</span>}
+      </div>
+      {stages.length > 0 && (
+        <div className="trace-row trace-sub">{stages.map(([n, s]) => <span key={n}>{n} ×{s.calls} (${s.cost_usd.toFixed(4)})</span>)}</div>
+      )}
+      <div className="trace-sub trace-id">run {report.run_id} · trace {t.request_id}</div>
+    </div>
+  );
+}
+
+function TriageReport({ report, referenceESI, demo, demoRecordedAt }) {
   const [activeTab, setActiveTab] = useState("summary");
   const [override, setOverride] = useState(null);
   const displayESI = override ? override.esi : report.esi_score;
   const esi = ESI_CONFIG[displayESI] || ESI_CONFIG[3];
   const confidence = report.confidence || 0.85;
+  const refMatch = referenceESI != null ? referenceESI === report.esi_score : null;
   const tabs = ["summary", "vitals", "symptoms", "protocol", "resources", "chat"];
   return (
     <div className="report-container">
@@ -300,11 +357,39 @@ function TriageReport({ report }) {
         </div>
         <div className="esi-right">
           <ConfidenceMeter score={confidence} />
+          {referenceESI != null && (
+            <div className={`esi-reference ${refMatch ? "match" : "differ"}`}
+              title="The ESI a senior nurse assigned this case in the test set. Shown after the run so the model's answer is its own.">
+              Reference ESI {referenceESI} · {refMatch ? "matches" : "differs"}
+            </div>
+          )}
           <div className="esi-note">Decision-support · Nurse makes final call</div>
         </div>
       </div>
 
+      {report.degraded && (
+        <div className="degraded-banner">
+          ⚙ Degraded mode: the model API was unavailable ({report.degraded_reason || "see trace"}). This ESI comes from the
+          rubric rules (vital thresholds + red-flag keywords), leans toward over-triage, and carries LOW confidence.
+        </div>
+      )}
+
       <NurseOverride currentESI={report.esi_score} override={override} onOverride={setOverride} />
+
+      {(report.red_flags?.length > 0 || report.action_checklist?.length > 0) && (
+        <div className="decision-grid">
+          <div className="decision-card red-flags">
+            <div className="detail-label">Red flags driving this ESI</div>
+            {report.red_flags?.length ? (
+              <ul>{report.red_flags.map((f, i) => <li key={i}>{f}</li>)}</ul>
+            ) : <div className="muted">None identified</div>}
+          </div>
+          <div className="decision-card">
+            <div className="detail-label">Immediate actions · care area <code>{report.care_area}</code></div>
+            <ol>{(report.action_checklist || []).map((a, i) => <li key={i}>{a}</li>)}</ol>
+          </div>
+        </div>
+      )}
 
       <div className="report-tabs">
         {tabs.map(tab => (
@@ -363,8 +448,9 @@ function TriageReport({ report }) {
         {activeTab === "resources" && (
           <div className="detail-section">{renderMarkdown(report.bed_detail)}</div>
         )}
-        {activeTab === "chat" && <ConversationChat report={report} />}
+        {activeTab === "chat" && <ConversationChat report={report} demo={demo} />}
       </div>
+      <TraceFooter report={report} demoRecordedAt={demoRecordedAt} />
     </div>
   );
 }
@@ -385,6 +471,9 @@ export default function App() {
   const [freeTextVitals, setFreeTextVitals] = useState("");
   const [elapsed, setElapsed] = useState(0);
   const [agentTimes, setAgentTimes] = useState({});
+  const [skippedAgents, setSkippedAgents] = useState([]);
+  const [serverConfig, setServerConfig] = useState(null);
+  const [demoRecordedAt, setDemoRecordedAt] = useState(null);
   const elapsedRef = useRef(null);
   const agentStartTimesRef = useRef({});
 
@@ -394,6 +483,7 @@ export default function App() {
 
   useEffect(() => {
     fetch(`${API}/patients`).then(r => r.json()).then(d => setPatients(d.patients || [])).catch(() => {});
+    fetch(`${API}/config`).then(r => r.json()).then(setServerConfig).catch(() => {});
   }, []);
 
   const agentOrder = ["coordinator", "vitals", "symptoms", "protocols", "beds", "synthesizer"];
@@ -417,6 +507,7 @@ export default function App() {
         evtSource.addEventListener("status", (e) => {
           const data = JSON.parse(e.data);
           setProgressMsg(data.message);
+          if (data.skipped_agents) setSkippedAgents(data.skipped_agents);
           if (data.active_agents) {
             const now = Date.now();
             data.active_agents.forEach(a => { agentStartTimesRef.current[a] = now; });
@@ -439,6 +530,7 @@ export default function App() {
           evtSource.close();
           const data = JSON.parse(e.data);
           clearInterval(elapsedRef.current);
+          setDemoRecordedAt(data.demo_recorded_at || null);
           setReport(data.report); setActiveAgents([]);
           setCompletedAgents(agentOrder); setPhase("results");
           setIsLoading(false);
@@ -447,7 +539,7 @@ export default function App() {
           evtSource.close();
           clearInterval(elapsedRef.current);
           try { setErrorMsg(JSON.parse(e.data).message); }
-          catch { setErrorMsg("Connection error. Is the backend running on port 8001?"); }
+          catch { setErrorMsg("Connection error. Is the backend running?"); }
           setPhase("error");
           setIsLoading(false);
         });
@@ -500,7 +592,7 @@ export default function App() {
     clearInterval(elapsedRef.current);
     setElapsed(0); setAgentTimes({});
     setPhase("select"); setSelectedPatient(null); setReport(null);
-    setActiveAgents([]); setCompletedAgents([]); setProgressMsg("");
+    setActiveAgents([]); setCompletedAgents([]); setSkippedAgents([]); setProgressMsg("");
     setErrorMsg(""); setIsLoading(false); setFreeText(""); setFreeTextVitals("");
   };
 
@@ -513,8 +605,12 @@ export default function App() {
         </div>
         <div className="header-tagline">ER Multi-Agent Decision Support</div>
         <div className="header-badge">Decision-support only · Nurse makes final call</div>
+        {serverConfig?.demo && <div className="demo-badge" title={`Replaying recorded runs (${serverConfig.demo_patients?.length || 1} patient${(serverConfig.demo_patients?.length || 1) === 1 ? "" : "s"} recorded${serverConfig.demo_recorded_at ? " " + new Date(serverConfig.demo_recorded_at).toISOString().slice(0, 10) : ""}); no model calls are made`}>▶ DEMO REPLAY</div>}
+        {serverConfig && !serverConfig.demo && (
+          <div className="model-badge" title={`fast model ${serverConfig.fast_model}`}>{serverConfig.pipeline} · {serverConfig.model}</div>
+        )}
         <div className="header-actions">
-          <button className="dark-toggle" onClick={() => setDarkMode(d => !d)}>{darkMode ? "☀️" : "🌙"}</button>
+          <button className="dark-toggle" aria-label="Toggle dark mode" onClick={() => setDarkMode(d => !d)}>{darkMode ? <SunIcon /> : <MoonIcon />}</button>
           {phase !== "select" && <button className="header-reset" onClick={reset}>New Patient</button>}
         </div>
       </header>
@@ -522,8 +618,10 @@ export default function App() {
         {phase === "select" && (
           <div className="select-phase">
             <div className="select-hero">
-              <h1>A triage team in<br /><em>60 seconds.</em></h1>
-              <p>4 specialist agents analyze vitals, symptoms, protocols, and resources in parallel — then synthesize a priority score and action plan.</p>
+              <h1>{serverConfig?.pipeline === "full" ? <>A triage team in<br /><em>60 seconds.</em></> : <>A triage decision<br /><em>in seconds.</em></>}</h1>
+              <p>{serverConfig?.pipeline === "full"
+                ? "4 specialist agents analyze vitals, symptoms, protocols, and resources in parallel — then a synthesizer assigns the ESI and action plan."
+                : "A symptom specialist flags the red flags, then a senior-nurse synthesizer assigns the ESI, care area and action plan. Lean by design: the eval showed the extra specialists added no safety."}</p>
             </div>
             <div className="mode-tabs">
               <button className={`mode-tab ${inputMode === "patient" ? "active" : ""}`} onClick={() => setInputMode("patient")}>Demo Patients</button>
@@ -536,16 +634,16 @@ export default function App() {
                     onClick={() => { if (!isLoading) { setSelectedPatient(p.id); runTriage(p.id); } }}>
                     <div className="patient-card-header">
                       <div className="patient-name">{p.name}</div>
-                      {p.acuity_hint && (
-                        <div className="patient-acuity" style={{ background: ESI_CONFIG[p.acuity_hint]?.color }}>
-                          ESI {p.acuity_hint}
+                      {serverConfig?.demo && (
+                        <div className="patient-recorded" title={serverConfig.demo_patients?.includes(p.id) ? "A recorded run exists for this patient" : "No recording for this patient; the sample trace will replay"}>
+                          {serverConfig.demo_patients?.includes(p.id) ? "recorded run" : "sample replay"}
                         </div>
                       )}
                     </div>
                     <div className="patient-complaint">{p.chief_complaint}</div>
                   </div>
                 ))}
-                {patients.length === 0 && <div className="no-patients">Loading patients... (is backend running on port 8001?)</div>}
+                {patients.length === 0 && <div className="no-patients">Loading patients... (is the backend running?)</div>}
               </div>
             )}
             {inputMode === "freetext" && (
@@ -570,7 +668,7 @@ export default function App() {
             <div className="elapsed-timer">{Math.floor(elapsed/60)}:{(elapsed%60).toString().padStart(2,'0')}</div>
             <p className="progress-msg">{progressMsg}</p>
             <button className="cancel-btn" onClick={reset}>Cancel</button>
-            <AgentStatus activeAgents={activeAgents} completedAgents={completedAgents} agentTimes={agentTimes} />
+            <AgentStatus activeAgents={activeAgents} completedAgents={completedAgents} agentTimes={agentTimes} skippedAgents={skippedAgents} />
           </div>
         )}
         {phase === "error" && (
@@ -583,7 +681,8 @@ export default function App() {
         )}
         {phase === "results" && report && (
           <div className="results-phase">
-            <TriageReport report={report} />
+            <TriageReport report={report} demo={!!serverConfig?.demo} demoRecordedAt={demoRecordedAt}
+              referenceESI={patients.find(p => p.id === selectedPatient)?.acuity_hint ?? null} />
           </div>
         )}
       </main>

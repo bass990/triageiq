@@ -67,6 +67,6 @@ desktop.ini
 CHANGES_*.md
 CLAUDE_CONTEXT.md
 
-# Generated presentation artifacts (the .pptx is built by make_pptx.py)
-*.pptx
-!docs/*.pptx
+# Runtime
+logs/
+eval/reports/checkpoint.jsonl

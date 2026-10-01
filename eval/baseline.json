@@ -1,0 +1,18 @@
+{
+  "tolerance": 0.1,
+  "model_synthesizer": "claude-sonnet-5",
+  "branches": {
+    "full": {
+      "critical_miss_rate": 0.0167,
+      "esi_strict_acc": 0.9667
+    },
+    "lean": {
+      "critical_miss_rate": 0.0,
+      "esi_strict_acc": 0.9889
+    },
+    "stripped": {
+      "critical_miss_rate": 0.0,
+      "esi_strict_acc": 1.0
+    }
+  }
+}

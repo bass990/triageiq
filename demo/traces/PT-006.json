@@ -1,0 +1,233 @@
+{
+  "recorded_at": "2026-09-29T07:42:53.184567+00:00",
+  "model": "claude-sonnet-5",
+  "pipeline": "lean",
+  "patient": "PT-006",
+  "events": [
+    {
+      "event": "status",
+      "step": 0,
+      "total": 7,
+      "message": "Starting triage...",
+      "pipeline": "lean"
+    },
+    {
+      "event": "status",
+      "step": 1,
+      "total": 7,
+      "message": "Retrieving patient data...",
+      "agent": "coordinator"
+    },
+    {
+      "event": "status",
+      "step": 2,
+      "total": 7,
+      "message": "Running Symptom Classifier...",
+      "agent": "vitals",
+      "active_agents": [
+        "symptoms"
+      ],
+      "skipped_agents": [
+        "vitals",
+        "protocols",
+        "beds"
+      ]
+    },
+    {
+      "event": "status",
+      "step": 3,
+      "total": 7,
+      "message": "Symptom Classifier complete",
+      "agent": "symptoms",
+      "agent_done": "symptoms"
+    },
+    {
+      "event": "status",
+      "step": 6,
+      "total": 7,
+      "message": "Synthesizing final triage decision...",
+      "agent": "synthesizer",
+      "active_agents": [
+        "synthesizer"
+      ]
+    },
+    {
+      "event": "status",
+      "step": 7,
+      "total": 7,
+      "message": "Triage complete.",
+      "agent": "done"
+    },
+    {
+      "event": "trace",
+      "request_id": "7dc9d5bcbfef",
+      "pipeline": "lean",
+      "llm_calls": 2,
+      "input_tokens": 1992,
+      "output_tokens": 1707,
+      "cache_write_tokens": 0,
+      "cache_read_tokens": 1807,
+      "cost_usd": 0.02655,
+      "llm_latency_s": 19.21,
+      "wall_time_s": 19.21,
+      "parse_failures": 0,
+      "degraded": false,
+      "calls_by_stage": {
+        "symptoms": {
+          "calls": 1,
+          "cost_usd": 0.00279,
+          "latency_s": 4.86
+        },
+        "synthesizer": {
+          "calls": 1,
+          "cost_usd": 0.02377,
+          "latency_s": 14.35
+        }
+      }
+    },
+    {
+      "event": "status",
+      "step": 7,
+      "total": 7,
+      "message": "Done!"
+    },
+    {
+      "event": "complete",
+      "report": {
+        "esi_score": 1,
+        "care_area": "resus",
+        "patient_summary": "58M with likely urosepsis progressing to septic shock with hypotension, hypoxia, and altered mental status following recent urinary catheterization.",
+        "red_flags": [
+          "SBP 82/50: septic shock / hypoperfusion requiring immediate fluid resuscitation and pressor readiness",
+          "GCS 11 (down from baseline): altered mental status from shock/sepsis encephalopathy, airway protection risk",
+          "Temp 39.6\u00b0C + dysuria + recent catheterization: strongly suspected urosepsis source",
+          "HR 124 with SBP 82: decompensated shock physiology",
+          "RR 28 with SpO2 91%: respiratory compromise/possible ARDS or compensatory tachypnea from metabolic acidosis",
+          "Diabetic patient: immunosuppressed, high risk of rapid deterioration and atypical/occult severe infection",
+          "Vancomycin allergy: must select alternative broad-spectrum gram-negative/gram-positive coverage (e.g., cefepime + alternative for gram-positive, avoid vancomycin)"
+        ],
+        "action_checklist": [
+          "Activate sepsis/shock team and move immediately to resus bay",
+          "Secure airway/high-flow O2, continuous SpO2 and cardiac monitoring; prepare for possible intubation given GCS 11",
+          "Establish 2 large-bore IVs, begin 30mL/kg crystalloid bolus for SBP 82",
+          "Draw blood cultures x2 STAT prior to antibiotics",
+          "Administer broad-spectrum antibiotics within 1 hour (avoid vancomycin - use alternative e.g. cefepime/piperacillin-tazobactam + consider gram-positive coverage alternative)",
+          "Obtain STAT lactate, CBC, BMP, coags, urinalysis/urine culture, blood glucose",
+          "Reassess BP/perfusion after fluid bolus; start norepinephrine if MAP <65 after fluids",
+          "Urology/critical care consult given catheter-associated urosepsis and shock"
+        ],
+        "vitals_findings": "Critical instability: hypotensive (82/50), tachycardic (124), tachypneic (28), hypoxic (SpO2 91%), febrile (39.6\u00b0C), and GCS 11 indicating altered mental status - consistent with septic shock and multi-system hypoperfusion.",
+        "symptom_findings": "3-day history of fever, rigors, confusion, and dysuria post-catheterization now progressed to hypotension and reduced responsiveness - classic evolution of urosepsis into septic shock with organ dysfunction (CNS, hemodynamic, respiratory).",
+        "protocol_findings": "Sepsis 3-Hour Bundle Protocol activated: blood cultures before antibiotics, broad-spectrum antibiotics within 1 hour (adjusted for vancomycin allergy), lactate level, 30mL/kg crystalloid bolus for hypotension, repeat lactate if initial >2.",
+        "bed_recommendation": "Resuscitation bay immediately; physician at bedside within 0 minutes (time-critical). Equipment: cardiac monitor, continuous pulse oximetry, arterial line setup, rapid infuser, airway cart at bedside. Consults: critical care/ICU and urology STAT for source control.",
+        "confidence": 0.9,
+        "rationale": "",
+        "esi_label": "Immediate",
+        "esi_color": "#DC2626",
+        "confidence_score": 0.9,
+        "timestamp": "2026-09-29T07:42:53.175147+00:00",
+        "generated_by": "TriageIQ",
+        "degraded": false,
+        "vitals_raw": {
+          "bp": "82/50",
+          "hr": 124,
+          "rr": 28,
+          "spo2": 91,
+          "temp": 39.6,
+          "gcs": 11
+        },
+        "vitals_trends": {
+          "hr": [
+            106.0,
+            109.1,
+            111.5,
+            116.8,
+            119.9,
+            124
+          ],
+          "spo2": [
+            93.6,
+            92.9,
+            92.8,
+            92.3,
+            91.4,
+            91
+          ],
+          "rr": [
+            21.6,
+            22.8,
+            24.7,
+            25.0,
+            26.5,
+            28
+          ],
+          "temp": [
+            39.0,
+            39.2,
+            39.2,
+            39.3,
+            39.5,
+            39.6
+          ],
+          "gcs": [
+            13,
+            12,
+            12,
+            12,
+            11,
+            11
+          ],
+          "bp_sys": [
+            104.5,
+            95.5,
+            93.1,
+            91.2,
+            85.6,
+            82.0
+          ]
+        },
+        "vitals_detail": "Critical instability: hypotensive (82/50), tachycardic (124), tachypneic (28), hypoxic (SpO2 91%), febrile (39.6\u00b0C), and GCS 11 indicating altered mental status - consistent with septic shock and multi-system hypoperfusion.",
+        "symptom_detail": "# SYMPTOM CLASSIFICATION & TRIAGE\n\n## RED FLAGS:\n- **Fever 39.6\u00b0C + hypotension (SBP 82) + altered mental status (GCS 11)**: possible sepsis / septic shock\n- **Dysuria + recent urinary catheterization + fever + hypotension**: possible urosepsis\n- **Tachycardia (HR 124) + tachypnea (RR 28) + hypoxia (SpO2 91%)**: end-organ hypoperfusion / respiratory compromise\n- **Type 2 diabetes + vague/atypical presentation (3-day prodrome)**: immunosuppressed patient with occult severe infection\n\n---\n\n## DIFFERENTIAL:\n1. **Urosepsis / gram-negative septic shock** (post-catheterization, dysuria, fever + hemodynamic collapse)\n2. **Acute kidney injury / uremia** (contributing to hypotension, altered mental status; rule out pre-renal vs. sepsis-driven)\n3. **Aspiration pneumonia / secondary respiratory infection** (low SpO2, tachypnea; complication of sepsis or altered consciousness)\n\n---\n\n## URGENCY:\n**1 \u2014 CRITICAL EMERGENCY**\n\nThis is a **fulminant septic shock presentation** meeting all three criteria of sepsis-3 (infection suspected + 2+ SIRS: fever, tachycardia, tachypnea) with **acute organ dysfunction** (hypotension unresponsive to compensatory mechanisms, altered mental status, hypoxia). Immediate activation of sepsis protocol, ICU-level care, and empiric broad-spectrum antibiotics (avoiding vancomycin per allergy) are required **now**.",
+        "protocol_detail": "Matched by keyword: Sepsis 3-Hour Bundle Protocol\n\n(specialist not run in the lean pipeline; see the Synthesizer's findings above)",
+        "bed_detail": "Resuscitation bay immediately; physician at bedside within 0 minutes (time-critical). Equipment: cardiac monitor, continuous pulse oximetry, arterial line setup, rapid infuser, airway cart at bedside. Consults: critical care/ICU and urology STAT for source control.\n\n(specialist not run in the lean pipeline; see the Synthesizer's findings above)",
+        "patient_name": "Marcus J., 58M",
+        "run_id": "TRG-05299FBE",
+        "pipeline": "lean",
+        "specialists_run": [
+          "symptoms"
+        ],
+        "sanitization": {
+          "name_tokenized": true,
+          "suspected_injections": {}
+        },
+        "trace": {
+          "request_id": "7dc9d5bcbfef",
+          "pipeline": "lean",
+          "llm_calls": 2,
+          "input_tokens": 1992,
+          "output_tokens": 1707,
+          "cache_write_tokens": 0,
+          "cache_read_tokens": 1807,
+          "cost_usd": 0.02655,
+          "llm_latency_s": 19.21,
+          "wall_time_s": 19.21,
+          "parse_failures": 0,
+          "degraded": false,
+          "calls_by_stage": {
+            "symptoms": {
+              "calls": 1,
+              "cost_usd": 0.00279,
+              "latency_s": 4.86
+            },
+            "synthesizer": {
+              "calls": 1,
+              "cost_usd": 0.02377,
+              "latency_s": 14.35
+            }
+          }
+        },
+        "confidence_label": "HIGH"
+      }
+    }
+  ]
+}

@@ -1,101 +1,20 @@
-"""Prompts used by the eval harness — mirrored from backend/agents.py.
+"""Prompts used by the eval harness.
 
-Why mirror, not import: agents.py imports from config.py which raises at
-module load if ANTHROPIC_API_KEY is unset, breaking CI without secrets.
-Mirroring lets the eval package import cleanly; a drift-detection test in
-tests/test_runners.py compares the mirror against source.
-
-The FULL branch uses 5 production prompts (VITALS, SYMPTOM, PROTOCOL, BED,
-SYNTHESIZER) verbatim. The STRIPPED branch uses a single Sonnet prompt that
-takes the patient record inline and produces the same JSON output.
+The specialist and Synthesizer prompts are IMPORTED from backend/agents.py
+(config.py no longer raises at import when ANTHROPIC_API_KEY is unset), so
+there is no mirror to drift. tests/test_runners.py keeps that invariant
+visible. The STRIPPED baseline prompt lives here because it exists only for
+the A/B.
 """
+from __future__ import annotations
 
-# Mirror of backend/agents.py::VITALS_PROMPT.
-VITALS_PROMPT = """You are a critical care specialist focused exclusively on vital signs.
-
-When given patient vitals, analyze each value against normal ranges:
-- BP: Normal 90-140/60-90 mmHg. <90 systolic = hypotension (CRITICAL)
-- HR: Normal 60-100 bpm. >100 = tachycardia, <60 = bradycardia
-- RR: Normal 12-20 breaths/min. >20 = tachypnea (concerning)
-- SpO2: Normal >95%. <94% = hypoxia (concerning), <90% = CRITICAL
-- Temp: Normal 36.1-37.2°C. >38.3°C = fever, <36°C = hypothermia
-- GCS: Normal 15. <14 = altered mental status (CRITICAL)
-
-For each abnormal value: state the value, what it indicates, and the clinical urgency.
-Assign a vitals severity score 1-5 (1=critical, 5=normal).
-Be specific and clinical. Never speculate beyond the data given."""
-
-
-# Mirror of backend/agents.py::SYMPTOM_PROMPT.
-SYMPTOM_PROMPT = """You are an emergency medicine physician specializing in chief complaint triage.
-
-Your job: classify the patient's symptoms by urgency and flag any red-flag presentations.
-
-Red-flag symptoms requiring immediate escalation:
-- Chest pain + diaphoresis + radiation = possible ACS
-- Worst headache of life = possible subarachnoid hemorrhage
-- Sudden facial droop / arm weakness / speech difficulty = possible stroke (FAST criteria)
-- Fever + hypotension + altered mental status = possible sepsis
-- Severe abdominal pain + rigid abdomen = possible surgical emergency
-- Respiratory distress with accessory muscle use = airway emergency
-
-For each red flag identified: name it, explain the differential diagnosis concern,
-and recommend the urgency of intervention.
-Assign a symptom severity score 1-5 (1=critical emergency, 5=minor complaint)."""
-
-
-# Mirror of backend/agents.py::PROTOCOL_PROMPT.
-PROTOCOL_PROMPT = """You are a clinical protocol specialist who matches patient presentations
-to evidence-based emergency protocols.
-
-When given a patient presentation:
-1. Identify the most likely protocol(s) that apply
-2. List the time-sensitive interventions in priority order
-3. Note any door-to-treatment time targets (e.g. door-to-balloon <90min for STEMI)
-4. Flag any contraindications or special considerations
-
-Always reference protocols by their standard clinical name (e.g. "ACS Protocol",
-"Stroke Fast-Track", "Sepsis 3-Hour Bundle"). Be specific about interventions —
-not vague recommendations. The nurse needs actionable steps."""
-
-
-# Mirror of backend/agents.py::BED_PROMPT.
-BED_PROMPT = """You are a hospital resource coordinator for the emergency department.
-
-Based on the patient's acuity level and clinical needs, recommend:
-1. The most appropriate care area (trauma_bay / resus / fast_track / general / waiting)
-2. Equipment that should be prepared before the patient arrives
-3. Specialist consults required (cardiology, neurology, surgery, etc.)
-4. Estimated time to physician based on acuity
-
-Care area guidelines:
-- Trauma bay: Life-threatening emergency requiring immediate intervention
-- Resus: Critical but not immediately life-threatening; close monitoring needed
-- Fast track: Moderate acuity; can wait briefly but needs timely care
-- General: Lower acuity; stable patient
-- Waiting: Non-urgent; stable with minor complaint
-
-Be specific about equipment needs. Vague recommendations waste time in the ER."""
-
-
-# Mirror of backend/agents.py::SYNTHESIZER_PROMPT.
-SYNTHESIZER_PROMPT = """You are the senior triage nurse making the final assessment.
-
-You have received analysis from specialist agents covering vitals, symptoms, protocols,
-and bed allocation. Your job is to synthesize everything into one clear, decisive
-triage decision.
-
-Your output must include:
-1. Final ESI Priority Score (1-5)
-2. One-sentence diagnosis hypothesis
-3. Immediate action checklist (ordered by priority, max 6 items)
-4. Care area assignment
-5. Time-to-physician recommendation
-6. Any CRITICAL flags requiring immediate escalation
-
-Be direct. Be fast. Nurses in the field need clarity, not hedging.
-This is a decision-support tool — always note the nurse makes the final call."""
-
+from backend.agents import (  # noqa: F401  (re-exported for runners + tests)
+    BED_PROMPT,
+    PROTOCOL_PROMPT,
+    SYMPTOM_PROMPT,
+    SYNTHESIZER_PROMPT,
+    VITALS_PROMPT,
+)
 
 # Appended to SYNTHESIZER_PROMPT in eval mode to nudge structured output.
 SYNTHESIZER_EVAL_SUFFIX = """
@@ -105,9 +24,8 @@ You are running inside an automated evaluation harness, not against a real
 EHR. The get_patient_data(), search_protocols(), and check_bed_availability()
 tools are mocked to return scenario-supplied data. The same generate_triage_report()
 output schema applies. Your job is identical to production: synthesize the
-specialist findings into a final ESI assignment + care_area + critical_flags
-list, then call generate_triage_report() with esi_score (1-5), care_area
-(one of trauma_bay/resus/fast_track/general/waiting), and patient_summary."""
+specialist findings into a final ESI assignment + care_area + red_flags
+list, then call generate_triage_report() with every required field."""
 
 
 SYNTHESIZER_PROMPT_EVAL = SYNTHESIZER_PROMPT + SYNTHESIZER_EVAL_SUFFIX

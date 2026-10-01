@@ -1,0 +1,12 @@
+services:
+  triageiq:
+    build: .
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env                     # ANTHROPIC_API_KEY, optional TRIAGEIQ_* flags
+    environment:
+      TRIAGEIQ_DEMO: "${TRIAGEIQ_DEMO:-0}"
+    volumes:
+      - ./logs:/app/logs         # hash-chained audit log survives restarts
+    restart: unless-stopped

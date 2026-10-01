@@ -1,102 +1,73 @@
 # TriageIQ Eval Harness
 
-Status: **Day 1 — scaffold + RUBRIC.md committed**. Scenarios, runners, and
-scorers land over Days 2-8.
+Status: **v2, three branches, runnable end-to-end.** 30 scenarios across 5
+tiers; the production prompts and the structured report tool are imported,
+not mirrored; errored runs are excluded and reported; a stopped run resumes.
 
 ## What this measures
 
-The headline question: *does TriageIQ's 4-specialist tiered-model architecture
-(4 Haiku specialists in parallel → Sonnet synthesizer) classify ESI triage
-levels better than a single Sonnet call that sees the same patient context
-inline?*
+*The A/B question: does a specialist pipeline classify ESI triage levels more safely than a
+single Sonnet call that sees the same patient record?* Three branches:
 
-The eval runs an A/B between:
+| Branch | Shape | Calls per scenario |
+|---|---|---|
+| `full` | 4 Haiku specialists (Vitals, Symptom, Protocol, Bed) in parallel, then the Sonnet Synthesizer with the strict `generate_triage_report` tool | 5-6 |
+| `lean` | Symptom specialist (Haiku) + Synthesizer. **The production default** since the June 2026 run | 2-3 |
+| `stripped` | One Sonnet call, patient record inline as XML, JSON out | 1 |
 
-- **FULL branch** — production pipeline (Vitals + Symptom + Protocol + Bed
-  specialists in parallel via ThreadPoolExecutor, all on Haiku; then
-  Synthesizer on Sonnet). 5 LLM calls per scenario.
-- **STRIPPED branch** — one Sonnet call with the patient record inline as
-  XML in the user message. 1 LLM call per scenario.
+Every branch sees the same tokenised, tagged record (`backend/sanitize.py`).
 
-...against 30 gold scenarios across 5 tiers:
+Scenarios (`eval/scenarios/`):
 
 | Tier | Count | Purpose |
 |---|---|---|
-| `clear_esi_1_2` | 7 | True emergencies — should be ESI 1 or 2 with high precision |
-| `clear_esi_4_5` | 6 | Clearly non-urgent — should be ESI 4 or 5; tests overtriage rate |
-| `ambiguous` | 6 | Defensible to assign ESI 2 OR 3, or 3 OR 4 — judgment calls |
-| `critical_miss_test` | 5 | **THE SAFETY-CRITICAL TIER.** Atypical presentations of high-acuity conditions where surface signs look benign. Underclassification = patient harm |
-| `adversarial` | 6 | Prompt injection in chief complaint and name, contradictory vitals, missing vitals, very long history |
+| `clear_esi_1_2` | 7 | True emergencies, should be ESI 1-2 |
+| `clear_esi_4_5` | 6 | Clearly non-urgent, tests over-triage |
+| `ambiguous` | 6 | Defensible to assign either of two adjacent levels |
+| `critical_miss_test` | 5 | **The safety tier.** Atypical high-acuity presentations with benign-looking vitals |
+| `adversarial` | 6 | Prompt injection in chief complaint and name, contradictory / missing vitals, long histories |
 
-...and scores five metric families: ESI strict accuracy, ESI ±1 lenient
-accuracy, critical-miss rate (the safety metric), overtriage rate (the
-resource metric), and care-area assignment accuracy.
+Metric families (`eval/scorers.py`, deterministic, no LLM judge): ESI strict
+and ±1 accuracy, **critical-miss rate** (gold ≤ 2 predicted ≥ 3, the
+load-bearing metric), over-triage rate on ESI 4-5, under- and over-triage on
+any tier against the acceptable set, care-area accuracy, red-flag coverage,
+structured-report validity, and per-branch cost / latency from the traces.
+
+## Running
+
+```
+make eval-small          # 5 scenarios x 3 branches x 1 rep     ≈ $0.50
+make eval                # 30 scenarios x 3 branches x 3 reps   ≈ $8, ~40 min
+python -m eval.runners --mode full --resume --yes    # continue a run that stopped
+make eval-report         # re-score + re-render eval/reports/latest_run.json
+make baseline            # freeze a COMPLETE run as eval/baseline.json (regression gate)
+make regression          # CI gate: critical-miss ceiling + strict-accuracy floor
+```
+
+A fatal API error (exhausted credits, bad key) aborts the run immediately; the
+report's Completeness section says how many runs were scored, errored, or
+never executed, and `--resume` reuses every successful run.
 
 ## What it does NOT measure
 
-- EHR / protocol-RAG / bed-availability integration — tool calls are mocked.
-- Differential diagnosis accuracy — would need attorney/physician calibration.
-- Pediatric / geriatric subspecialty calibration — uses adult-default thresholds.
-- Real-world ED outcomes — scored against the published rubric, not ground truth.
-
-See `RUBRIC.md` for the ESI scoring rules + red-flag taxonomy + care-area
-mapping. See `../phase2/18_triageiq_eval_scope_spec.md` for the full design
-rationale.
+- EHR / protocol-RAG / bed-availability integration: tool calls are mocked.
+- Differential-diagnosis accuracy: would need physician calibration.
+- Paediatric / geriatric subspecialty thresholds: adult defaults.
+- Real-world ED outcomes: scored against `RUBRIC.md`, not ground truth.
 
 ## Layout
 
 ```
 eval/
-├── README.md           # this file
-├── RUBRIC.md           # committed Day 1, BEFORE scenarios
-├── schemas.py          # Pydantic models — the contract between scenarios,
-│                       # runners, and scorers
-├── instrumentation.py  # CallTrace + cost arithmetic (Haiku + Sonnet pricing)
-├── rubric_audit.py     # programmatic encoding of RUBRIC.md §1-4
-├── prompts.py          # mirrored production prompts + STRIPPED prompt
-├── runners.py          # FULL + STRIPPED pipeline executors + CLI
-├── scorers.py          # 5 scoring functions + aggregation + A/B lift
-├── orchestrator.py     # Cartesian product runner + report renderer
-├── scenarios/          # one *.json per scenario; lands Days 2-5
-└── reports/            # one run_YYYYMMDD_HHMMSS.md per eval run
+├── RUBRIC.md           # committed before any scenario was labelled
+├── schemas.py          # Scenario / ScenarioResult / BranchMetrics / ABLiftResult
+├── instrumentation.py  # CallTrace + pricing (Sonnet 5, Haiku 4.5)
+├── rubric_audit.py     # deterministic rubric; backend/fallback.py must agree (tested)
+├── prompts.py          # imports backend/agents.py; owns only the STRIPPED prompt
+├── runners.py          # full / lean / stripped + CLI (--branches, --reps, --resume, --rerender)
+├── scorers.py          # metric families, errored runs excluded, lift per candidate branch
+├── orchestrator.py     # fail-fast, checkpoint, resume, report renderer
+├── regression_check.py # CI gate
+├── scenarios/          # 30 gold scenarios
+└── reports/            # run_YYYYMMDD_HHMMSS.md + latest_run.json
 ```
-
-## Running the eval
-
-Day 1 scaffold: nothing runs yet — `make eval-dry` prints the Day-1 status.
-
-Once Day 8 lands:
-
-```
-make eval-small   # 5 scenarios, 2 branches, 1 rep    ≈ $0.50-$1
-make eval         # 30 scenarios, 2 branches, 3 reps  ≈ $5-10
-```
-
-Both need `ANTHROPIC_API_KEY` in env. Reports land in `eval/reports/`.
-
-## Honest disclosures
-
-1. **The eval bypasses EHR / protocol / bed tool calls.** Mocked. Testing
-   integration requires a separate harness.
-2. **Synthetic patient records, not real ED cases.** The `critical_miss_test`
-   tier is sourced from standard ED triage references but the specific
-   cases are author-constructed.
-3. **The rubric encodes the production system prompts.** If `backend/agents.py`
-   SYNTHESIZER_PROMPT changes, the rubric must be re-verified — a
-   drift-detection test in `tests/test_runners.py` will catch silent skew.
-4. **Acceptable-ESI sets admit author judgment.** The `acceptable_esi` list
-   per scenario is the rubric's degree of freedom.
-5. **No LLM-as-judge.** Scorers are deterministic. Trades human-rater-agreement
-   upside for zero same-model bias.
-6. **Not clinically validated.** Eval scores against the published rubric,
-   not against ground-truth ED outcomes. Use the result for architectural
-   decisions, not for clinical claims.
-7. **Cost estimates assume Sonnet 4.6 + Haiku 4.5 pricing.** Verify before
-   each full run.
-
-## CI strategy
-
-- `ci.yml` runs ruff + pytest on every push/PR. Zero LLM calls. <1 min, free.
-- `eval.yml` is manual-trigger only (`workflow_dispatch`). Needs the
-  `ANTHROPIC_API_KEY` GitHub secret. Uploads the markdown report as an
-  artifact. Cost: $5-10.

@@ -12,10 +12,12 @@ from dataclasses import dataclass, field
 # Sonnet 4.6 and Haiku 4.5 numbers verified against Anthropic public pricing
 # as of 2026-06.
 PRICING: dict[str, dict[str, float]] = {
+    "claude-sonnet-5": {"input": 3.0, "output": 15.0},
     "claude-sonnet-4-6": {"input": 3.0, "output": 15.0},
     "claude-sonnet-4-5": {"input": 3.0, "output": 15.0},
-    "claude-haiku-4-5": {"input": 0.25, "output": 1.25},
-    "claude-haiku-4-5-20251001": {"input": 0.25, "output": 1.25},
+    "claude-haiku-4-5": {"input": 1.0, "output": 5.0},
+    "claude-haiku-4-5-20251001": {"input": 1.0, "output": 5.0},
+    "claude-opus-5": {"input": 15.0, "output": 75.0},
     "claude-opus-4-7": {"input": 15.0, "output": 75.0},
     "claude-opus-4-8": {"input": 15.0, "output": 75.0},
 }

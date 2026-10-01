@@ -1,0 +1,232 @@
+{
+  "recorded_at": "2026-09-22T20:40:40.084618+00:00",
+  "model": "claude-sonnet-5",
+  "pipeline": "lean",
+  "patient": "PT-001",
+  "events": [
+    {
+      "event": "status",
+      "step": 0,
+      "total": 7,
+      "message": "Starting triage...",
+      "pipeline": "lean"
+    },
+    {
+      "event": "status",
+      "step": 1,
+      "total": 7,
+      "message": "Retrieving patient data...",
+      "agent": "coordinator"
+    },
+    {
+      "event": "status",
+      "step": 2,
+      "total": 7,
+      "message": "Running Symptom Classifier...",
+      "agent": "vitals",
+      "active_agents": [
+        "symptoms"
+      ],
+      "skipped_agents": [
+        "vitals",
+        "protocols",
+        "beds"
+      ]
+    },
+    {
+      "event": "status",
+      "step": 3,
+      "total": 7,
+      "message": "Symptom Classifier complete",
+      "agent": "symptoms",
+      "agent_done": "symptoms"
+    },
+    {
+      "event": "status",
+      "step": 6,
+      "total": 7,
+      "message": "Synthesizing final triage decision...",
+      "agent": "synthesizer",
+      "active_agents": [
+        "synthesizer"
+      ]
+    },
+    {
+      "event": "status",
+      "step": 7,
+      "total": 7,
+      "message": "Triage complete.",
+      "agent": "done"
+    },
+    {
+      "event": "trace",
+      "request_id": "b79486830677",
+      "pipeline": "lean",
+      "llm_calls": 2,
+      "input_tokens": 2121,
+      "output_tokens": 1864,
+      "cache_write_tokens": 1807,
+      "cache_read_tokens": 0,
+      "cost_usd": 0.03567,
+      "llm_latency_s": 23.22,
+      "wall_time_s": 23.79,
+      "parse_failures": 0,
+      "degraded": false,
+      "calls_by_stage": {
+        "symptoms": {
+          "calls": 1,
+          "cost_usd": 0.00272,
+          "latency_s": 4.64
+        },
+        "synthesizer": {
+          "calls": 1,
+          "cost_usd": 0.03295,
+          "latency_s": 18.58
+        }
+      }
+    },
+    {
+      "event": "status",
+      "step": 7,
+      "total": 7,
+      "message": "Done!"
+    },
+    {
+      "event": "complete",
+      "report": {
+        "esi_score": 1,
+        "care_area": "resus",
+        "patient_summary": "65-year-old male with classic ACS presentation (chest pain radiating to left arm, diaphoresis, nausea) complicated by hypotension and tachycardia, concerning for MI with cardiogenic shock.",
+        "red_flags": [
+          "SBP 88/60 with chest pain/diaphoresis: possible cardiogenic shock or massive MI with hemodynamic compromise",
+          "HR 112 (tachycardia) with hypotension and chest pain: compensatory response to shock/ischemia",
+          "SpO2 94% with RR 22: possible pulmonary edema/congestion from left heart failure",
+          "Chest pain radiating to left arm + diaphoresis + nausea: classic ACS presentation",
+          "Age 65 + T2DM + HTN + 30pk/yr smoking: very high-risk cardiovascular profile, atypical/silent ischemia risk in diabetics",
+          "Hemodynamic instability (hypotension+tachycardia) in setting of ACS meets ESI-1 criteria for immediate life-saving intervention"
+        ],
+        "action_checklist": [
+          "Immediate move to resus bay, continuous cardiac monitor and pulse oximetry",
+          "STAT 12-lead ECG within 10 minutes to assess for STEMI",
+          "Establish IV access x2, draw troponin, CBC, BMP, coagulation studies",
+          "Administer supplemental O2 to target SpO2 >94%",
+          "Aspirin 325mg PO now (no allergy contraindication noted, confirm no bleeding risk)",
+          "Activate cath lab immediately if ST elevation confirmed; stat cardiology consult regardless",
+          "Prepare for possible pressor support / fluid bolus given SBP 88/60 - assess for cardiogenic shock",
+          "Serial vitals and reassessment every 5-10 minutes; anticipate rapid deterioration"
+        ],
+        "vitals_findings": "Hypotensive (BP 88/60), tachycardic (HR 112), tachypneic (RR 22), mildly hypoxic (SpO2 94%), afebrile, GCS 15. This combination of hypotension + tachycardia + hypoxia in the setting of chest pain strongly suggests hemodynamic compromise / cardiogenic shock.",
+        "symptom_findings": "Chest pain radiating to left arm with diaphoresis and nausea for 45 minutes - classic ACS presentation. High-risk comorbidities (HTN, T2DM, heavy smoking history) amplify concern for acute MI. No mention of tearing pain or unequal pulses to suggest dissection, but this remains on differential.",
+        "protocol_findings": "ACS/Chest Pain Protocol activated: 12-lead ECG within 10 minutes, dual IV access with troponin/CBC/BMP/coag labs, aspirin 325mg PO, cath lab activation if STEMI confirmed, stat cardiology consult. Trauma/Ortho protocol not applicable to this presentation.",
+        "bed_recommendation": "Resus bay immediately - physician at bedside within 0 minutes (time-critical). Requires cardiac monitor, defibrillator on standby, 2x large-bore IV setup, stat ECG machine, point-of-care troponin, and immediate cardiology/cath lab activation team on standby.",
+        "confidence": 0.9,
+        "rationale": "This is ESI-1 rather than ESI-2 because the patient exhibits frank hemodynamic instability (SBP 88/60, HR 112) concurrent with classic ACS symptoms, meeting criteria for possible cardiogenic shock which requires immediate life-saving intervention, not just expedited care. Not ESI-3-5 given the clear high-risk red flags, unstable vitals, and life-threatening differential (STEMI/cardiogenic shock) that could deteriorate to arrest without immediate action.",
+        "esi_label": "Immediate",
+        "esi_color": "#DC2626",
+        "confidence_score": 0.9,
+        "timestamp": "2026-09-22T20:40:40.080867+00:00",
+        "generated_by": "TriageIQ",
+        "degraded": false,
+        "vitals_raw": {
+          "bp": "88/60",
+          "hr": 112,
+          "rr": 22,
+          "spo2": 94,
+          "temp": 37.1,
+          "gcs": 15
+        },
+        "vitals_trends": {
+          "hr": [
+            96.2,
+            100.5,
+            100.1,
+            104.8,
+            107.8,
+            112
+          ],
+          "spo2": [
+            96.9,
+            96.0,
+            95.9,
+            95.4,
+            94.6,
+            94
+          ],
+          "rr": [
+            17.1,
+            17.9,
+            18.9,
+            20.6,
+            20.4,
+            22
+          ],
+          "temp": [
+            37.1,
+            37.1,
+            37.1,
+            37.1,
+            37.1,
+            37.1
+          ],
+          "gcs": [
+            15,
+            15,
+            15,
+            15,
+            15,
+            15
+          ],
+          "bp_sys": [
+            113.1,
+            107.4,
+            103.3,
+            94.9,
+            93.9,
+            88.0
+          ]
+        },
+        "vitals_detail": "Hypotensive (BP 88/60), tachycardic (HR 112), tachypneic (RR 22), mildly hypoxic (SpO2 94%), afebrile, GCS 15. This combination of hypotension + tachycardia + hypoxia in the setting of chest pain strongly suggests hemodynamic compromise / cardiogenic shock.",
+        "symptom_detail": "# SYMPTOM CLASSIFICATION \u2013 PATIENT-600e\n\n## RED FLAGS:\n- **Chest pain + diaphoresis + radiation to left arm**: classic acute coronary syndrome (ACS) presentation\n- **SBP 88/60 with tachycardia (HR 112) and chest pain**: possible cardiogenic shock or massive MI with hemodynamic compromise\n- **Age 65, diabetes, smoking history, hypertension**: very high-risk profile for acute MI\n- **Tachypnea (RR 22) with hypoxia (SpO\u2082 94%)**: suggests pulmonary congestion or cardiogenic pulmonary edema\n\n---\n\n## DIFFERENTIAL:\n1. **Acute ST-elevation MI (STEMI) with cardiogenic shock** \u2014 requires immediate cath lab activation\n2. **Acute Non-ST-elevation MI (NSTEMI)** \u2014 high troponin risk despite hypotension\n3. **Aortic dissection** \u2014 less likely given smoker/HTN profile but must exclude (unequal BPs, tearing quality); however ACS presentation is more typical\n\n---\n\n## URGENCY:\n**1 \u2014 CRITICAL EMERGENCY**\n\nThis is a textbook acute coronary syndrome with hemodynamic instability. Hypotension + tachycardia + classic ischemic chest pain in a high-risk patient = cardiogenic shock until proven otherwise. Requires **immediate** 12-lead ECG, dual IV access, stat labs (troponin, CBC, BMP, coagulation), aspirin if no contraindication, and cardiology/cath lab activation. Do not delay.",
+        "protocol_detail": "Matched by keyword: ACS / Chest Pain Protocol, Trauma / Orthopedic Protocol\n\n(specialist not run in the lean pipeline; see the Synthesizer's findings above)",
+        "bed_detail": "Resus bay immediately - physician at bedside within 0 minutes (time-critical). Requires cardiac monitor, defibrillator on standby, 2x large-bore IV setup, stat ECG machine, point-of-care troponin, and immediate cardiology/cath lab activation team on standby.\n\n(specialist not run in the lean pipeline; see the Synthesizer's findings above)",
+        "patient_name": "John M., 65M",
+        "run_id": "TRG-5E7E4322",
+        "pipeline": "lean",
+        "specialists_run": [
+          "symptoms"
+        ],
+        "sanitization": {
+          "name_tokenized": true,
+          "suspected_injections": {}
+        },
+        "trace": {
+          "request_id": "b79486830677",
+          "pipeline": "lean",
+          "llm_calls": 2,
+          "input_tokens": 2121,
+          "output_tokens": 1864,
+          "cache_write_tokens": 1807,
+          "cache_read_tokens": 0,
+          "cost_usd": 0.03567,
+          "llm_latency_s": 23.22,
+          "wall_time_s": 23.79,
+          "parse_failures": 0,
+          "degraded": false,
+          "calls_by_stage": {
+            "symptoms": {
+              "calls": 1,
+              "cost_usd": 0.00272,
+              "latency_s": 4.64
+            },
+            "synthesizer": {
+              "calls": 1,
+              "cost_usd": 0.03295,
+              "latency_s": 18.58
+            }
+          }
+        },
+        "confidence_label": "HIGH"
+      }
+    }
+  ]
+}

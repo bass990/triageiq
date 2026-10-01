@@ -243,7 +243,7 @@ def test_run_and_save_headline_full_safer_on_critical_miss(tmp_path):
             reports_dir=reports_dir,
         )
 
-    assert "FULL pipeline has a LOWER critical-miss rate" in report_text
+    assert "FULL has a LOWER critical-miss rate than STRIPPED" in report_text
 
 
 def test_run_and_save_headline_stripped_safer_on_critical_miss(tmp_path):
@@ -267,7 +267,7 @@ def test_run_and_save_headline_stripped_safer_on_critical_miss(tmp_path):
             reports_dir=reports_dir,
         )
 
-    assert "STRIPPED baseline has a LOWER critical-miss rate" in report_text
+    assert "STRIPPED has a LOWER critical-miss rate than FULL" in report_text
     assert "safety regression" in report_text
 
 

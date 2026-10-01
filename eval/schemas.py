@@ -18,6 +18,11 @@ ESI = Literal[1, 2, 3, 4, 5]
 # Care areas, mirrored from backend/tools.py::MOCK_BEDS.
 CareArea = Literal["trauma_bay", "resus", "fast_track", "general", "waiting"]
 
+# Eval branches: full (4 specialists), lean (Symptom specialist only, the
+# production default), stripped (one Sonnet call, the baseline).
+BRANCHES: tuple[str, ...] = ("full", "lean", "stripped")
+Branch = Literal["full", "lean", "stripped"]
+
 # Tier names — must match scenario file directory conventions.
 Tier = Literal[
     "clear_esi_1_2",
@@ -136,7 +141,7 @@ class ScenarioResult(BaseModel):
 
     scenario_id: str
     tier: Tier
-    branch: Literal["full", "stripped"]
+    branch: Branch
     rep: int
 
     # Agent output. None if the run errored.
@@ -145,6 +150,7 @@ class ScenarioResult(BaseModel):
     # Bookkeeping.
     error: str | None = None
     duration_seconds: float = 0.0
+    schema_valid: bool = False      # the structured report validated without repair
 
 
 # ---------------------------------------------------------------------------
@@ -159,6 +165,8 @@ class TriageScore(BaseModel):
     esi_lenient_match: bool                  # |predicted - canonical| <= 1
     is_critical_miss: bool                   # gold ESI <= 2 AND predicted >= 3
     is_overtriage: bool                      # gold ESI >= 4 AND predicted <= 2
+    is_undertriage_any: bool = False         # predicted less urgent than every acceptable ESI (any tier)
+    is_overtriage_any: bool = False          # predicted more urgent than every acceptable ESI (any tier)
     care_area_match: bool                    # predicted care_area in acceptable set
     critical_flag_coverage: float            # fraction of expected flags mentioned
 
@@ -166,7 +174,7 @@ class TriageScore(BaseModel):
 class BranchMetrics(BaseModel):
     """Aggregated metrics across scenarios for one branch."""
 
-    branch: Literal["full", "stripped"]
+    branch: Branch
     n_scenarios: int
     n_reps: int
 
@@ -177,6 +185,20 @@ class BranchMetrics(BaseModel):
     overtriage_rate: float                   # over scenarios with gold ESI >= 4
     care_area_acc: float
     critical_flag_coverage_mean: float
+
+    # Direction of every miss, on every tier (under-triage is the dangerous one).
+    undertriage_any_rate: float = 0.0
+    overtriage_any_rate: float = 0.0
+    schema_valid_rate: float = 0.0
+
+    # Cost / latency from the traces of this branch's scored runs.
+    mean_llm_calls: float = 0.0
+    mean_cost_usd: float = 0.0
+    mean_latency_s: float = 0.0
+
+    # Completeness: errored runs are excluded from every metric above.
+    n_errored_runs: int = 0
+    scenarios_dropped: list[str] = Field(default_factory=list)
 
     # Per-tier breakdown — same metrics scoped to each tier.
     per_tier: dict[str, dict[str, float]] = Field(default_factory=dict)
@@ -192,6 +214,8 @@ class ABLiftResult(BaseModel):
     interpretation: Literal[
         "full_wins", "stripped_wins", "equivalent", "investigate"
     ]
+    candidate: str = "full"
+    baseline: str = "stripped"
 
 
 # Convenience alias for orchestrator return shapes.

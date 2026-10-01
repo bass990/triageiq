@@ -1,0 +1,224 @@
+{
+  "recorded_at": "2026-09-29T07:41:51.732200+00:00",
+  "model": "claude-sonnet-5",
+  "pipeline": "lean",
+  "patient": "PT-003",
+  "events": [
+    {
+      "event": "status",
+      "step": 0,
+      "total": 7,
+      "message": "Starting triage...",
+      "pipeline": "lean"
+    },
+    {
+      "event": "status",
+      "step": 1,
+      "total": 7,
+      "message": "Retrieving patient data...",
+      "agent": "coordinator"
+    },
+    {
+      "event": "status",
+      "step": 2,
+      "total": 7,
+      "message": "Running Symptom Classifier...",
+      "agent": "vitals",
+      "active_agents": [
+        "symptoms"
+      ],
+      "skipped_agents": [
+        "vitals",
+        "protocols",
+        "beds"
+      ]
+    },
+    {
+      "event": "status",
+      "step": 3,
+      "total": 7,
+      "message": "Symptom Classifier complete",
+      "agent": "symptoms",
+      "agent_done": "symptoms"
+    },
+    {
+      "event": "status",
+      "step": 6,
+      "total": 7,
+      "message": "Synthesizing final triage decision...",
+      "agent": "synthesizer",
+      "active_agents": [
+        "synthesizer"
+      ]
+    },
+    {
+      "event": "status",
+      "step": 7,
+      "total": 7,
+      "message": "Triage complete.",
+      "agent": "done"
+    },
+    {
+      "event": "trace",
+      "request_id": "faf05b64b795",
+      "pipeline": "lean",
+      "llm_calls": 2,
+      "input_tokens": 1677,
+      "output_tokens": 1010,
+      "cache_write_tokens": 0,
+      "cache_read_tokens": 1807,
+      "cost_usd": 0.01671,
+      "llm_latency_s": 9.68,
+      "wall_time_s": 9.68,
+      "parse_failures": 0,
+      "degraded": false,
+      "calls_by_stage": {
+        "symptoms": {
+          "calls": 1,
+          "cost_usd": 0.00201,
+          "latency_s": 3.54
+        },
+        "synthesizer": {
+          "calls": 1,
+          "cost_usd": 0.0147,
+          "latency_s": 6.14
+        }
+      }
+    },
+    {
+      "event": "status",
+      "step": 7,
+      "total": 7,
+      "message": "Done!"
+    },
+    {
+      "event": "complete",
+      "report": {
+        "esi_score": 4,
+        "care_area": "fast_track",
+        "patient_summary": "45M with isolated right ankle injury after fall, unable to bear weight, likely fracture vs severe sprain, hemodynamically stable.",
+        "red_flags": [],
+        "action_checklist": [
+          "Apply Ottawa ankle rules to determine need for X-ray",
+          "Administer analgesia (e.g., oral NSAID/acetaminophen) per pain scale",
+          "Neurovascular check distal to injury (pulses, sensation, cap refill)",
+          "Immobilize ankle and keep non-weight-bearing",
+          "Obtain ankle X-ray if Ottawa rules positive",
+          "Ice and elevate extremity",
+          "Orthopedic referral if fracture confirmed on imaging"
+        ],
+        "vitals_findings": "All vitals within normal limits: BP 128/82, HR 76, RR 14, SpO2 99%, Temp 36.8\u00b0C, GCS 15. No signs of systemic instability or shock.",
+        "symptom_findings": "Isolated right ankle pain after fall with inability to bear weight; no neurovascular compromise or red-flag features. Differential includes ankle fracture, severe sprain, or syndesmotic injury.",
+        "protocol_findings": "Trauma/Orthopedic Protocol matched: apply Ottawa ankle rules, assess pain, obtain X-ray if indicated, check neurovascular status distal to injury, orthopedic consult if fracture confirmed.",
+        "bed_recommendation": "Fast-track bed with X-ray access on-site; physician evaluation within 30-60 minutes; splinting/immobilization supplies and crutches available; orthopedic consult on-call if fracture confirmed.",
+        "confidence": 0.9,
+        "rationale": "",
+        "esi_label": "Less Urgent",
+        "esi_color": "#2563EB",
+        "confidence_score": 0.9,
+        "timestamp": "2026-09-29T07:41:51.725200+00:00",
+        "generated_by": "TriageIQ",
+        "degraded": false,
+        "vitals_raw": {
+          "bp": "128/82",
+          "hr": 76,
+          "rr": 14,
+          "spo2": 99,
+          "temp": 36.8,
+          "gcs": 15
+        },
+        "vitals_trends": {
+          "hr": [
+            74.8,
+            75.1,
+            77.0,
+            76.2,
+            77.3,
+            76
+          ],
+          "spo2": [
+            98.6,
+            99.2,
+            99.4,
+            99.2,
+            99.1,
+            99
+          ],
+          "rr": [
+            13.9,
+            14.3,
+            14.3,
+            13.6,
+            13.7,
+            14
+          ],
+          "temp": [
+            36.8,
+            36.8,
+            36.8,
+            36.8,
+            36.8,
+            36.8
+          ],
+          "gcs": [
+            15,
+            15,
+            15,
+            15,
+            15,
+            15
+          ],
+          "bp_sys": [
+            127.5,
+            124.2,
+            131.0,
+            124.5,
+            131.0,
+            128.0
+          ]
+        },
+        "vitals_detail": "All vitals within normal limits: BP 128/82, HR 76, RR 14, SpO2 99%, Temp 36.8\u00b0C, GCS 15. No signs of systemic instability or shock.",
+        "symptom_detail": "# SYMPTOM CLASSIFIER ASSESSMENT\n\n## RED FLAGS: none\nVitals are normal across the board. No signs of neurovascular compromise, compartment syndrome, or systemic instability. Mechanism (fall with ankle pain and inability to bear weight) is straightforward orthopedic trauma without red-flag features.\n\n## DIFFERENTIAL:\n1. **Ankle fracture** (lateral malleolus, medial malleolus, or bimalleolar) \u2013 most common outcome of inversion injury with inability to bear weight\n2. **Severe ankle sprain with ligamentous injury** \u2013 can present identically; Ottawa ankle rules will help differentiate\n3. **Syndesmotic injury (high ankle sprain)** \u2013 less common but important to rule out on imaging\n\n## URGENCY: 3\n**Moderate urgency.** This is an isolated orthopedic injury with normal vitals, intact neurovascular status, and no systemic signs. Requires timely evaluation and imaging (Ottawa ankle rules applicable), but is not immediately life-threatening. Pain control and weight-bearing restriction are the priorities; orthopedic evaluation can proceed in standard ED flow without immediate escalation.",
+        "protocol_detail": "Matched by keyword: Trauma / Orthopedic Protocol\n\n(specialist not run in the lean pipeline; see the Synthesizer's findings above)",
+        "bed_detail": "Fast-track bed with X-ray access on-site; physician evaluation within 30-60 minutes; splinting/immobilization supplies and crutches available; orthopedic consult on-call if fracture confirmed.\n\n(specialist not run in the lean pipeline; see the Synthesizer's findings above)",
+        "patient_name": "Robert T., 45M",
+        "run_id": "TRG-77CAA708",
+        "pipeline": "lean",
+        "specialists_run": [
+          "symptoms"
+        ],
+        "sanitization": {
+          "name_tokenized": true,
+          "suspected_injections": {}
+        },
+        "trace": {
+          "request_id": "faf05b64b795",
+          "pipeline": "lean",
+          "llm_calls": 2,
+          "input_tokens": 1677,
+          "output_tokens": 1010,
+          "cache_write_tokens": 0,
+          "cache_read_tokens": 1807,
+          "cost_usd": 0.01671,
+          "llm_latency_s": 9.68,
+          "wall_time_s": 9.68,
+          "parse_failures": 0,
+          "degraded": false,
+          "calls_by_stage": {
+            "symptoms": {
+              "calls": 1,
+              "cost_usd": 0.00201,
+              "latency_s": 3.54
+            },
+            "synthesizer": {
+              "calls": 1,
+              "cost_usd": 0.0147,
+              "latency_s": 6.14
+            }
+          }
+        },
+        "confidence_label": "HIGH"
+      }
+    }
+  ]
+}

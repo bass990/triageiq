@@ -1,0 +1,231 @@
+{
+  "recorded_at": "2026-09-29T07:41:42.039989+00:00",
+  "model": "claude-sonnet-5",
+  "pipeline": "lean",
+  "patient": "PT-002",
+  "events": [
+    {
+      "event": "status",
+      "step": 0,
+      "total": 7,
+      "message": "Starting triage...",
+      "pipeline": "lean"
+    },
+    {
+      "event": "status",
+      "step": 1,
+      "total": 7,
+      "message": "Retrieving patient data...",
+      "agent": "coordinator"
+    },
+    {
+      "event": "status",
+      "step": 2,
+      "total": 7,
+      "message": "Running Symptom Classifier...",
+      "agent": "vitals",
+      "active_agents": [
+        "symptoms"
+      ],
+      "skipped_agents": [
+        "vitals",
+        "protocols",
+        "beds"
+      ]
+    },
+    {
+      "event": "status",
+      "step": 3,
+      "total": 7,
+      "message": "Symptom Classifier complete",
+      "agent": "symptoms",
+      "agent_done": "symptoms"
+    },
+    {
+      "event": "status",
+      "step": 6,
+      "total": 7,
+      "message": "Synthesizing final triage decision...",
+      "agent": "synthesizer",
+      "active_agents": [
+        "synthesizer"
+      ]
+    },
+    {
+      "event": "status",
+      "step": 7,
+      "total": 7,
+      "message": "Triage complete.",
+      "agent": "done"
+    },
+    {
+      "event": "trace",
+      "request_id": "2f133ea1736a",
+      "pipeline": "lean",
+      "llm_calls": 2,
+      "input_tokens": 1822,
+      "output_tokens": 1694,
+      "cache_write_tokens": 0,
+      "cache_read_tokens": 1807,
+      "cost_usd": 0.02656,
+      "llm_latency_s": 17.24,
+      "wall_time_s": 17.25,
+      "parse_failures": 0,
+      "degraded": false,
+      "calls_by_stage": {
+        "symptoms": {
+          "calls": 1,
+          "cost_usd": 0.00243,
+          "latency_s": 3.95
+        },
+        "synthesizer": {
+          "calls": 1,
+          "cost_usd": 0.02413,
+          "latency_s": 13.29
+        }
+      }
+    },
+    {
+      "event": "status",
+      "step": 7,
+      "total": 7,
+      "message": "Done!"
+    },
+    {
+      "event": "complete",
+      "report": {
+        "esi_score": 2,
+        "care_area": "resus",
+        "patient_summary": "28F with sudden \"worst headache of life\" and GCS 14, concerning for subarachnoid hemorrhage or cerebral venous sinus thrombosis.",
+        "red_flags": [
+          "Sudden onset worst headache of life: classic sentinel symptom for subarachnoid hemorrhage",
+          "GCS 14 (down from presumed baseline 15): early sign of raised ICP or intracranial bleed",
+          "BP 180/110 with severe headache: hypertensive emergency vs reactive to SAH/increased ICP",
+          "OCP use in young female: elevated risk of venous sinus thrombosis and arterial dissection/stroke",
+          "Potential for rapid neurological deterioration: requires continuous monitoring"
+        ],
+        "action_checklist": [
+          "Immediate stat non-contrast CT head - do not delay",
+          "Activate stroke/neuro team and place neurosurgery on standby",
+          "Continuous cardiac and neuro monitoring, repeat GCS q15min",
+          "IV access x2, send CBC, BMP, coagulation panel, type & screen",
+          "Blood glucose check immediately",
+          "Control BP cautiously (avoid precipitous drops) per hypertensive emergency protocol - hold aggressive antihypertensives pending CT",
+          "If CT negative, prepare for lumbar puncture to rule out SAH",
+          "Consider CT venogram if venous sinus thrombosis suspected given OCP use"
+        ],
+        "vitals_findings": "BP significantly elevated at 180/110 (hypertensive urgency range), HR 88 and RR 16 within normal limits, SpO2 98% adequate, afebrile at 37.0C. GCS 14 indicates mild altered mental status - not baseline neurologically intact, a critical red flag in context of sudden severe headache.",
+        "symptom_findings": "Sudden, severe \"worst headache of life\" onset 20 minutes prior to arrival - a sentinel symptom requiring emergent workup for subarachnoid hemorrhage. Compounded by OCP use raising risk for venous sinus thrombosis and arterial dissection. No fever to suggest infectious etiology (meningitis less likely but not entirely excluded).",
+        "protocol_findings": "Stroke/TIA Fast-Track Protocol matched: activate stroke team immediately, NIHSS assessment, stat non-contrast CT head, immediate blood glucose check, IV access with CBC/BMP/coagulation/type and screen. Given thunderclap headache presentation, SAH-specific workup (CT +/- LP) should run in parallel with stroke protocol.",
+        "bed_recommendation": "Resuscitation bay with continuous cardiac/neuro monitoring; time-to-physician target under 10 minutes. Neurology and neurosurgery consults on standby; stat CT head prioritized; anesthesia/airway support on standby given GCS trend.",
+        "confidence": 0.9,
+        "rationale": "This is ESI 2 rather than ESI 1 because the patient is not currently requiring immediate life-saving intervention (airway intact, hemodynamically stable, GCS 14 not \u22648), but the thunderclap headache with mild GCS depression and hypertension represents a high-risk presentation for SAH/intracranial catastrophe that cannot wait - mandating emergent imaging and specialist activation. It is not ESI 3 because a delay in evaluation could be catastrophic given the sentinel headache pattern and neurological changes.",
+        "esi_label": "Emergent",
+        "esi_color": "#EA580C",
+        "confidence_score": 0.9,
+        "timestamp": "2026-09-29T07:41:42.014796+00:00",
+        "generated_by": "TriageIQ",
+        "degraded": false,
+        "vitals_raw": {
+          "bp": "180/110",
+          "hr": 88,
+          "rr": 16,
+          "spo2": 98,
+          "temp": 37.0,
+          "gcs": 14
+        },
+        "vitals_trends": {
+          "hr": [
+            86.4,
+            89.4,
+            87.1,
+            87.6,
+            88.9,
+            88
+          ],
+          "spo2": [
+            97.6,
+            97.9,
+            98.0,
+            98.3,
+            98.1,
+            98
+          ],
+          "rr": [
+            16.4,
+            16.1,
+            15.8,
+            16.0,
+            16.2,
+            16
+          ],
+          "temp": [
+            37.0,
+            37.0,
+            37.0,
+            37.0,
+            37.0,
+            37.0
+          ],
+          "gcs": [
+            15,
+            15,
+            15,
+            15,
+            15,
+            15
+          ],
+          "bp_sys": [
+            159.6,
+            158.8,
+            167.4,
+            171.6,
+            171.0,
+            180.0
+          ]
+        },
+        "vitals_detail": "BP significantly elevated at 180/110 (hypertensive urgency range), HR 88 and RR 16 within normal limits, SpO2 98% adequate, afebrile at 37.0C. GCS 14 indicates mild altered mental status - not baseline neurologically intact, a critical red flag in context of sudden severe headache.",
+        "symptom_detail": "# EMERGENCY MEDICINE TRIAGE ASSESSMENT\n\n## RED FLAGS:\n- **Worst headache of life, sudden onset:** subarachnoid hemorrhage (SAH) until proven otherwise\n- **Elevated BP 180/110 + severe headache:** hypertensive emergency vs. secondary effect of SAH\n- **GCS 14 (mild altered mental status):** indicates intracranial pathology; not baseline alert\n- **Young female on OCPs with sudden severe headache:** increased thrombotic risk (venous sinus thrombosis, stroke)\n\n---\n\n## DIFFERENTIAL:\n1. **Subarachnoid hemorrhage** \u2013 classic presentation; immediate neurosurgical emergency\n2. **Arterial dissection (carotid/vertebral)** \u2013 can present with sudden headache \u00b1 focal neuro deficits; risk elevated on OCPs\n3. **Venous sinus thrombosis** \u2013 OCP use is risk factor; can mimic SAH; must exclude\n\n---\n\n## URGENCY: **1 (CRITICAL EMERGENCY)**\n\n**Rationale:** \"Worst headache of life\" is a sentinel symptom for SAH requiring immediate activation of neurology/neurosurgery, stat non-contrast CT head, and consideration of lumbar puncture if CT negative. The combination of sudden onset, elevated BP, mild GCS depression, and OCP use (thrombotic risk) mandates emergent imaging and intervention. This patient requires immediate bed assignment, continuous monitoring, and neurosurgical consultation standby.",
+        "protocol_detail": "Matched by keyword: Stroke / TIA Fast-Track Protocol\n\n(specialist not run in the lean pipeline; see the Synthesizer's findings above)",
+        "bed_detail": "Resuscitation bay with continuous cardiac/neuro monitoring; time-to-physician target under 10 minutes. Neurology and neurosurgery consults on standby; stat CT head prioritized; anesthesia/airway support on standby given GCS trend.\n\n(specialist not run in the lean pipeline; see the Synthesizer's findings above)",
+        "patient_name": "Sarah K., 28F",
+        "run_id": "TRG-7C53794B",
+        "pipeline": "lean",
+        "specialists_run": [
+          "symptoms"
+        ],
+        "sanitization": {
+          "name_tokenized": true,
+          "suspected_injections": {}
+        },
+        "trace": {
+          "request_id": "2f133ea1736a",
+          "pipeline": "lean",
+          "llm_calls": 2,
+          "input_tokens": 1822,
+          "output_tokens": 1694,
+          "cache_write_tokens": 0,
+          "cache_read_tokens": 1807,
+          "cost_usd": 0.02656,
+          "llm_latency_s": 17.24,
+          "wall_time_s": 17.25,
+          "parse_failures": 0,
+          "degraded": false,
+          "calls_by_stage": {
+            "symptoms": {
+              "calls": 1,
+              "cost_usd": 0.00243,
+              "latency_s": 3.95
+            },
+            "synthesizer": {
+              "calls": 1,
+              "cost_usd": 0.02413,
+              "latency_s": 13.29
+            }
+          }
+        },
+        "confidence_label": "HIGH"
+      }
+    }
+  ]
+}

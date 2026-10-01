@@ -32,7 +32,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PYTHONPATH: .
-        run: python -m eval.runners --mode ${{ inputs.mode }}
+        run: python -m eval.runners --mode ${{ inputs.mode }} --yes
 
       - name: Upload report
         uses: actions/upload-artifact@v4

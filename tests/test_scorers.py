@@ -331,7 +331,7 @@ def test_compute_ab_lift_emits_one_per_metric():
         branch="stripped", n_reps=1,
     )
     lifts = compute_ab_lift(full_metrics, stripped_metrics)
-    assert len(lifts) == 6
+    assert len(lifts) == 8
     names = {lift.metric for lift in lifts}
     assert "esi_strict_acc" in names
     assert "critical_miss_rate" in names

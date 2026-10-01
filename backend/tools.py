@@ -1,8 +1,8 @@
-import json
-import sys, os
+import os
+import sys
 from datetime import datetime, timezone
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import ANTHROPIC_API_KEY
 
 # ─── Mock EHR / hospital data ────────────────────────────────────────────────
 
@@ -164,7 +164,7 @@ def search_protocols(query: str, top_k: int = 3) -> dict:
     }
 
     matches = []
-    for key, protocol in protocols_db.items():
+    for protocol in protocols_db.values():
         score = sum(1 for kw in protocol["keywords"] if kw in query_lower)
         if score > 0:
             matches.append((score, protocol))
@@ -193,53 +193,35 @@ def check_bed_availability(care_area: str) -> dict:
     return {"success": False, "error": f"Unknown care area: {care_area}"}
 
 
-def _decrement_bed(text: str) -> None:
-    """Decrement available count for the care area mentioned in text."""
-    text_lower = text.lower()
-    area_keywords = {
-        "trauma_bay": ["trauma bay", "trauma_bay"],
-        "resus": ["resus", "resuscitation"],
-        "fast_track": ["fast track", "fast_track"],
-        "general": ["general"],
-        "waiting": ["waiting"],
-    }
-    for area, keywords in area_keywords.items():
-        if any(kw in text_lower for kw in keywords):
-            if MOCK_BEDS[area]["available"] > 0:
-                MOCK_BEDS[area]["available"] -= 1
-            return
+def _decrement_bed(care_area: str) -> None:
+    """Reserve one bed in the chosen care area (mock ERP)."""
+    area = (care_area or "").lower().replace(" ", "_")
+    if area in MOCK_BEDS and MOCK_BEDS[area]["available"] > 0:
+        MOCK_BEDS[area]["available"] -= 1
 
 
-def generate_triage_report(
-    patient_summary: str,
-    vitals_findings: str,
-    symptom_findings: str,
-    protocol_findings: str,
-    bed_recommendation: str,
-    esi_score: int
-) -> dict:
-    """Compile all specialist findings into a structured triage report."""
+def generate_triage_report(**fields) -> dict:
+    """Validate the Synthesizer's structured report; return errors for a repair round."""
+    from backend.schemas import CONFIDENCE_SCORE, validate_report
     from config import ESI_LEVELS
-    level_info = ESI_LEVELS.get(esi_score, ESI_LEVELS[3])
-    _decrement_bed(bed_recommendation)
-    return {
-        "success": True,
-        "report": {
-            "esi_score": esi_score,
-            "esi_label": level_info["label"],
-            "esi_color": level_info["color"],
-            "patient_summary": patient_summary,
-            "vitals_findings": vitals_findings,
-            "symptom_findings": symptom_findings,
-            "protocol_findings": protocol_findings,
-            "bed_recommendation": bed_recommendation,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "generated_by": "TriageIQ Multi-Agent System"
-        }
-    }
+    parsed, errors = validate_report(fields)
+    if parsed is None:
+        return {"success": False, "error": "Report failed validation; fix these fields and call generate_triage_report again.",
+                "validation_errors": errors[:12]}
+    r = parsed.model_dump()
+    level = ESI_LEVELS[r["esi_score"]]
+    _decrement_bed(r["care_area"])
+    r.update({
+        "esi_label": level["label"], "esi_color": level["color"],
+        "confidence_score": CONFIDENCE_SCORE[r["confidence"]],
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "generated_by": "TriageIQ",
+    })
+    return {"success": True, "report": r}
 
 
 # ─── Tool schemas ─────────────────────────────────────────────────────────────
+from backend.schemas import TRIAGE_REPORT_TOOL  # noqa: E402
 
 TOOLS = [
     {
@@ -280,22 +262,7 @@ TOOLS = [
             "required": ["care_area"]
         }
     },
-    {
-        "name": "generate_triage_report",
-        "description": "Generate the final structured triage report. Call this LAST after all specialist findings are complete.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "patient_summary": {"type": "string", "description": "Brief patient summary"},
-                "vitals_findings": {"type": "string", "description": "Critical vitals findings and abnormalities"},
-                "symptom_findings": {"type": "string", "description": "Symptom classification and red flags"},
-                "protocol_findings": {"type": "string", "description": "Matched protocol and key interventions"},
-                "bed_recommendation": {"type": "string", "description": "Care area assignment and resource needs"},
-                "esi_score": {"type": "integer", "description": "ESI priority score 1-5 (1=immediate, 5=non-urgent)", "minimum": 1, "maximum": 5}
-            },
-            "required": ["patient_summary", "vitals_findings", "symptom_findings", "protocol_findings", "bed_recommendation", "esi_score"]
-        }
-    }
+    TRIAGE_REPORT_TOOL,
 ]
 
 TOOL_MAP = {

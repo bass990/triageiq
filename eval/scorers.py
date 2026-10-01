@@ -83,6 +83,8 @@ def score_triage(scenario: Scenario, result: ScenarioResult) -> TriageScore:
 
     is_critical_miss = (gold_esi in (1, 2)) and (predicted_esi >= 3)
     is_overtriage = (gold_esi in (4, 5)) and (predicted_esi <= 2)
+    is_undertriage_any = predicted_esi > max(acceptable_esi)
+    is_overtriage_any = predicted_esi < min(acceptable_esi)
 
     care_area_match = (
         result.output.care_area is not None
@@ -96,6 +98,8 @@ def score_triage(scenario: Scenario, result: ScenarioResult) -> TriageScore:
         esi_lenient_match=lenient,
         is_critical_miss=is_critical_miss,
         is_overtriage=is_overtriage,
+        is_undertriage_any=is_undertriage_any,
+        is_overtriage_any=is_overtriage_any,
         care_area_match=care_area_match,
         critical_flag_coverage=coverage,
     )
@@ -113,17 +117,31 @@ def _avg(values: list[float]) -> float:
 def _per_scenario_metrics(
     scenario: Scenario,
     rep_results: list[ScenarioResult],
-) -> dict[str, float]:
-    """Average across reps for one scenario."""
+) -> dict[str, float] | None:
+    """Average across the successful reps for one scenario.
+
+    Errored reps (API failures, exhausted credits, timeouts) are excluded
+    rather than scored as worst case: an outage says nothing about the
+    architecture. Returns None when every rep errored so the scenario drops
+    out and is listed in the report's completeness section.
+    """
     strict_vals: list[float] = []
     lenient_vals: list[float] = []
     crit_miss_vals: list[float] = []
     overtri_vals: list[float] = []
+    under_any: list[float] = []
+    over_any: list[float] = []
+    schema_vals: list[float] = []
     care_vals: list[float] = []
     cov_vals: list[float] = []
 
     for r in rep_results:
+        if r.error or r.output is None:
+            continue
         ts = score_triage(scenario, r)
+        under_any.append(1.0 if ts.is_undertriage_any else 0.0)
+        over_any.append(1.0 if ts.is_overtriage_any else 0.0)
+        schema_vals.append(1.0 if r.schema_valid else 0.0)
         strict_vals.append(1.0 if ts.esi_strict_match else 0.0)
         lenient_vals.append(1.0 if ts.esi_lenient_match else 0.0)
         crit_miss_vals.append(1.0 if ts.is_critical_miss else 0.0)
@@ -131,11 +149,16 @@ def _per_scenario_metrics(
         care_vals.append(1.0 if ts.care_area_match else 0.0)
         cov_vals.append(ts.critical_flag_coverage)
 
+    if not strict_vals:
+        return None
     return {
         "esi_strict": _avg(strict_vals),
         "esi_lenient": _avg(lenient_vals),
         "is_critical_miss": _avg(crit_miss_vals),
         "is_overtriage": _avg(overtri_vals),
+        "is_undertriage_any": _avg(under_any),
+        "is_overtriage_any": _avg(over_any),
+        "schema_valid": _avg(schema_vals),
         "care_area_match": _avg(care_vals),
         "critical_flag_coverage": _avg(cov_vals),
     }
@@ -176,12 +199,17 @@ def aggregate_branch_metrics(
     per_tier_scores: dict[str, list[dict[str, float]]] = defaultdict(list)
     high_acuity_crit_miss: list[float] = []
     low_acuity_overtriage: list[float] = []
+    n_errored = sum(1 for r in results if r.error)
+    dropped: list[str] = []
 
     for scenario_id, rep_results in results_by_scenario.items():
         scenario = scenario_by_id.get(scenario_id)
         if scenario is None:
             continue
         per_s = _per_scenario_metrics(scenario, rep_results)
+        if per_s is None:
+            dropped.append(scenario_id)
+            continue
         per_tier_scores[scenario.tier].append(per_s)
 
         if scenario.expected_esi in (1, 2):
@@ -198,6 +226,9 @@ def aggregate_branch_metrics(
             "esi_lenient": _avg([s["esi_lenient"] for s in scenario_scores]),
             "is_critical_miss": _avg([s["is_critical_miss"] for s in scenario_scores]),
             "is_overtriage": _avg([s["is_overtriage"] for s in scenario_scores]),
+            "is_undertriage_any": _avg([s["is_undertriage_any"] for s in scenario_scores]),
+            "is_overtriage_any": _avg([s["is_overtriage_any"] for s in scenario_scores]),
+            "schema_valid": _avg([s["schema_valid"] for s in scenario_scores]),
             "care_area_match": _avg([s["care_area_match"] for s in scenario_scores]),
             "critical_flag_coverage": _avg([s["critical_flag_coverage"] for s in scenario_scores]),
         }
@@ -218,7 +249,12 @@ def aggregate_branch_metrics(
         overtriage_rate=_avg(low_acuity_overtriage),
         care_area_acc=_across_tiers("care_area_match"),
         critical_flag_coverage_mean=_across_tiers("critical_flag_coverage"),
+        undertriage_any_rate=_across_tiers("is_undertriage_any"),
+        overtriage_any_rate=_across_tiers("is_overtriage_any"),
+        schema_valid_rate=_across_tiers("schema_valid"),
         per_tier=per_tier_metrics,
+        n_errored_runs=n_errored,
+        scenarios_dropped=sorted(dropped),
     )
 
 
@@ -248,6 +284,8 @@ def compute_ab_lift(full: BranchMetrics, stripped: BranchMetrics) -> list[ABLift
         ("esi_lenient_acc", full.esi_lenient_acc, stripped.esi_lenient_acc, False),
         ("critical_miss_rate", full.critical_miss_rate, stripped.critical_miss_rate, True),
         ("overtriage_rate", full.overtriage_rate, stripped.overtriage_rate, True),
+        ("undertriage_any_rate", full.undertriage_any_rate, stripped.undertriage_any_rate, True),
+        ("overtriage_any_rate", full.overtriage_any_rate, stripped.overtriage_any_rate, True),
         ("care_area_acc", full.care_area_acc, stripped.care_area_acc, False),
         ("critical_flag_coverage_mean", full.critical_flag_coverage_mean, stripped.critical_flag_coverage_mean, False),
     ]
@@ -261,5 +299,6 @@ def compute_ab_lift(full: BranchMetrics, stripped: BranchMetrics) -> list[ABLift
             stripped_score=stripped_v,
             lift=lift,
             interpretation=interp,  # type: ignore[arg-type]
+            candidate=full.branch, baseline=stripped.branch,
         ))
     return out
